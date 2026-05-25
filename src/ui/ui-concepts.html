@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Idol 102 UI Concepts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #08090b;
+        --ink: #f7f1e8;
+        --muted: rgba(247, 241, 232, .58);
+        --soft: rgba(247, 241, 232, .76);
+        --line: rgba(255, 255, 255, .13);
+        --panel: rgba(20, 23, 29, .72);
+        --panel-strong: rgba(10, 12, 16, .86);
+        --gold: #c9a96e;
+        --gold-2: #ead7ad;
+        --rose: #d9a0aa;
+        --mint: #86b99c;
+        --blue: #8fb8ca;
+        --danger: #e56b80;
+        --phone-w: 390px;
+        --phone-h: 844px;
+        --font-body: Inter, "DM Sans", PingFang SC, system-ui, sans-serif;
+        --font-serif: "Noto Serif SC", serif;
+        --font-display: "Playfair Display", serif;
+      }
+
+      * { box-sizing: border-box; }
+      html { min-height: 100%; background: var(--bg); }
+      body {
+        min-height: 100%;
+        margin: 0;
+        color: var(--ink);
+        font-family: var(--font-body);
+        letter-spacing: 0;
+        background:
+          radial-gradient(circle at 18% 4%, rgba(143, 184, 202, .18), transparent 30%),
+          radial-gradient(circle at 78% 8%, rgba(201, 169, 110, .16), transparent 34%),
+          linear-gradient(180deg, #11151b 0%, #08090b 48%, #0d0d10 100%);
+      }
+
+      button { font: inherit; border: 0; }
+      h1, h2, h3, p { margin: 0; }
+      .concept-page { width: min(100%, 1500px); margin: 0 auto; padding: 44px 28px 64px; }
+      .board-header { display: grid; grid-template-columns: minmax(260px, 1fr) auto; gap: 24px; align-items: end; margin-bottom: 32px; }
+      .kicker { color: var(--gold); font-size: 11px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+      .board-header h1 { margin-top: 12px; font-family: var(--font-display); font-size: clamp(42px, 7vw, 82px); font-style: italic; line-height: .88; }
+      .board-header p { max-width: 680px; margin-top: 18px; color: var(--soft); font-size: 15px; line-height: 1.7; }
+      .palette { display: grid; grid-template-columns: repeat(5, 34px); gap: 8px; justify-content: end; }
+      .swatch { height: 34px; border: 1px solid var(--line); border-radius: 50%; box-shadow: 0 12px 30px rgba(0,0,0,.28); }
+      .swatch:nth-child(1) { background: #08090b; }
+      .swatch:nth-child(2) { background: #c9a96e; }
+      .swatch:nth-child(3) { background: #8fb8ca; }
+      .swatch:nth-child(4) { background: #86b99c; }
+      .swatch:nth-child(5) { background: #d9a0aa; }
+
+      .phone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 28px; align-items: start; }
+      .concept-card { display: grid; gap: 12px; justify-items: center; }
+      .concept-label { width: min(100%, 390px); display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 12px; }
+      .concept-label strong { color: var(--ink); font-size: 14px; }
+      .phone {
+        position: relative;
+        width: min(100%, var(--phone-w));
+        aspect-ratio: 390 / 844;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, .16);
+        border-radius: 44px;
+        background: #08090b;
+        box-shadow: 0 34px 90px rgba(0, 0, 0, .44), inset 0 1px 0 rgba(255, 255, 255, .1);
+      }
+      .phone::before {
+        content: "";
+        position: absolute;
+        z-index: 20;
+        left: 50%;
+        top: 12px;
+        width: 122px;
+        height: 29px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        background: #050608;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      }
+      .status {
+        position: absolute;
+        z-index: 15;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 48px;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        padding: 0 28px 10px;
+        color: rgba(247,241,232,.76);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .home-indicator {
+        position: absolute;
+        z-index: 30;
+        left: 50%;
+        bottom: 14px;
+        width: 134px;
+        height: 5px;
+        transform: translateX(-50%);
+        border-radius: 999px;
+        background: rgba(247, 241, 232, .32);
+      }
+      .screen { position: absolute; inset: 0; padding: 58px 18px 22px; overflow: hidden; }
+      .glass {
+        border: 1px solid var(--line);
+        background: linear-gradient(145deg, rgba(255,255,255,.11), rgba(255,255,255,.04)), var(--panel);
+        box-shadow: 0 18px 48px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.12);
+        backdrop-filter: blur(18px);
+      }
+      .pill { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 7px 11px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.07); color: var(--soft); font-size: 11px; font-weight: 700; }
+      .primary { height: 48px; border-radius: 15px; background: linear-gradient(135deg, #ead7ad, #c9a96e 58%, #a88655); color: #12100d; font-weight: 900; box-shadow: 0 16px 38px rgba(201,169,110,.24); }
+      .ghost { height: 42px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.07); color: var(--ink); font-weight: 800; }
+      .title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+      .title-row span, .screen-label { color: var(--gold); font-size: 10px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; }
+      .title-row h2 { margin-top: 6px; font-family: var(--font-serif); font-size: 25px; font-weight: 400; line-height: 1.18; }
+
+      .nav {
+        position: absolute;
+        z-index: 12;
+        left: 24px;
+        right: 24px;
+        bottom: 20px;
+        height: 64px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 7px;
+        border-radius: 22px;
+      }
+      .nav button { border-radius: 15px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 800; }
+      .nav button.active { background: rgba(255,255,255,.12); color: var(--gold); }
+
+      .splash {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background:
+          linear-gradient(to top, rgba(5,6,8,.98), rgba(5,6,8,.2) 56%, rgba(5,6,8,.82)),
+          url("./assets/characters/felix.png") center 18% / cover no-repeat;
+      }
+      .splash::after, .home-screen::after, .chat-bg::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: .05;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .splash-copy { position: relative; z-index: 2; padding-top: 26px; }
+      .splash-copy h2 { margin-top: 10px; font-family: var(--font-display); font-size: 58px; font-style: italic; line-height: .88; text-shadow: 0 18px 42px rgba(0,0,0,.66); }
+      .splash-copy p { width: 245px; margin-top: 15px; color: var(--soft); font-size: 13px; line-height: 1.6; }
+      .splash-bottom { position: relative; z-index: 2; display: grid; gap: 12px; }
+      .member-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+      .member-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; border: 1px solid rgba(255,255,255,.18); filter: saturate(.88); }
+      .member-strip img:nth-child(2) { border-color: rgba(201,169,110,.78); box-shadow: 0 0 0 2px rgba(201,169,110,.18); }
+
+      .home-screen {
+        background:
+          linear-gradient(to top, rgba(6,7,10,.98), rgba(6,7,10,.2) 44%, rgba(6,7,10,.65)),
+          url("./assets/characters/hyunjin.png") center 12% / cover no-repeat;
+      }
+      .home-top { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-start; }
+      .home-top h2 { font-size: 38px; line-height: 1; text-transform: uppercase; }
+      .home-top p { margin-top: 7px; color: var(--muted); font-size: 12px; }
+      .round-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: rgba(10,12,16,.58); color: var(--ink); backdrop-filter: blur(14px); }
+      .stage-card { position: absolute; z-index: 2; left: 22px; right: 22px; bottom: 276px; padding: 15px; border-radius: 18px; }
+      .stage-card h3 { font-size: 15px; }
+      .stage-card p { margin-top: 8px; color: var(--soft); font-size: 12px; line-height: 1.55; }
+      .memory-row { position: absolute; z-index: 2; left: 0; right: 0; bottom: 94px; display: flex; gap: 14px; overflow: hidden; padding: 0 22px 14px; }
+      .polaroid { flex: 0 0 106px; height: 132px; padding: 7px; border-radius: 7px; background: #fff8eb; color: #211a13; transform: rotate(-2deg); box-shadow: 0 18px 38px rgba(0,0,0,.44); }
+      .polaroid:nth-child(2) { transform: rotate(2deg); }
+      .polaroid:nth-child(3) { transform: rotate(-1deg); opacity: .72; }
+      .polaroid i { display: block; height: 82px; border-radius: 4px; background-size: cover; background-position: center; }
+      .polaroid strong { display: block; margin-top: 7px; font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .polaroid span { color: #756756; font-size: 10px; }
+
+      .chat-bg {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background:
+          radial-gradient(circle at 70% 10%, rgba(201,169,110,.16), transparent 35%),
+          linear-gradient(180deg, #10131a, #08090b);
+      }
+      .chat-header { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,.1); }
+      .avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(201,169,110,.55); }
+      .chat-header strong { display: block; font-size: 15px; }
+      .chat-header span { color: var(--muted); font-size: 11px; }
+      .chat-header .pill { margin-left: auto; }
+      .messages { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding-top: 6px; }
+      .bubble { max-width: 78%; padding: 12px 14px; border-radius: 18px; font-size: 13px; line-height: 1.55; }
+      .idol { align-self: flex-start; border-bottom-left-radius: 5px; }
+      .user { align-self: flex-end; border-bottom-right-radius: 5px; background: linear-gradient(135deg, #ead7ad, #c9a96e); color: #15110d; font-weight: 650; }
+      .system { align-self: center; max-width: 92%; border: 1px solid rgba(201,169,110,.26); background: rgba(201,169,110,.1); color: var(--gold-2); font-size: 11px; text-align: center; }
+      .reply-chips { display: flex; gap: 8px; overflow: hidden; }
+      .reply-chips .pill { flex: 0 0 auto; }
+      .input-bar { height: 54px; display: grid; grid-template-columns: 1fr 42px; gap: 8px; align-items: center; padding: 7px; border-radius: 22px; }
+      .input-bar span { color: var(--muted); padding-left: 12px; font-size: 13px; }
+      .input-bar button { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: #111; font-weight: 900; }
+
+      .map-screen {
+        padding-left: 0;
+        padding-right: 0;
+        background: #08090b;
+      }
+      .map-bg { position: absolute; inset: 0; background: url("./assets/concept-street-map.svg") center / cover no-repeat; filter: saturate(.96) contrast(1.02); }
+      .map-shade { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(5,6,8,.76), rgba(5,6,8,.08) 28%, rgba(5,6,8,.82)); }
+      .map-head { position: relative; z-index: 3; padding: 0 22px; display: flex; justify-content: space-between; align-items: flex-start; }
+      .map-head h2 { margin-top: 7px; font-family: var(--font-serif); font-weight: 400; font-size: 28px; }
+      .pin {
+        position: absolute;
+        z-index: 4;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 34px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(234,215,173,.34);
+        background: rgba(9,11,15,.7);
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 900;
+        box-shadow: 0 14px 36px rgba(0,0,0,.42), 0 0 22px rgba(201,169,110,.12);
+        backdrop-filter: blur(14px);
+      }
+      .pin small { color: var(--gold); font-size: 14px; }
+      .pin.company { left: 230px; top: 675px; }
+      .pin.cafe { left: 64px; top: 230px; }
+      .pin.park { left: 238px; top: 290px; }
+      .pin.practice { left: 74px; top: 520px; }
+      .pin.store { left: 224px; top: 552px; }
+      .map-sheet { position: absolute; z-index: 5; left: 18px; right: 18px; bottom: 92px; padding: 15px; border-radius: 22px; }
+      .map-sheet h3 { font-size: 17px; }
+      .map-sheet p { margin-top: 8px; color: var(--soft); font-size: 12px; line-height: 1.55; }
+      .weather-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 13px; }
+      .weather-row .pill { justify-content: center; min-width: 0; padding-inline: 8px; }
+
+      .detail-screen {
+        background:
+          linear-gradient(to top, rgba(5,6,8,.98), rgba(5,6,8,.36), rgba(5,6,8,.72)),
+          url("./assets/scenes/company.jpg") center / cover no-repeat;
+      }
+      .back-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 180px; }
+      .event-panel { display: grid; gap: 12px; padding: 16px; border-radius: 24px; }
+      .event-panel h2 { font-family: var(--font-serif); font-weight: 400; font-size: 26px; }
+      .event-panel p { color: var(--soft); font-size: 13px; line-height: 1.65; }
+      .event-list { display: grid; gap: 9px; }
+      .event { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.07); }
+      .event strong { display: block; font-size: 13px; }
+      .event span { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+      .event button { width: 38px; height: 38px; border-radius: 50%; background: var(--gold); color: #111; font-weight: 900; }
+
+      .memory-screen {
+        background:
+          radial-gradient(circle at 50% 0, rgba(217,160,170,.16), transparent 34%),
+          linear-gradient(180deg, #111219, #08090b);
+      }
+      .memory-main { display: grid; gap: 16px; align-content: start; }
+      .big-polaroid { margin: 24px auto 0; width: 286px; padding: 12px 12px 18px; border-radius: 9px; background: #f8efe2; color: #221910; transform: rotate(-1.5deg); box-shadow: 0 26px 78px rgba(0,0,0,.56); }
+      .big-polaroid img { width: 100%; height: 248px; object-fit: cover; border-radius: 5px; filter: saturate(.92) contrast(1.02); }
+      .big-polaroid h3 { margin-top: 13px; font-family: var(--font-serif); font-size: 18px; font-weight: 600; }
+      .big-polaroid p { margin-top: 8px; color: #5b4c3d; font-size: 12px; line-height: 1.55; }
+      .memory-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+      .me-screen {
+        padding-left: 0;
+        padding-right: 0;
+        background: linear-gradient(180deg, #090b0e, #08090b);
+      }
+      .me-cover {
+        height: 252px;
+        background:
+          linear-gradient(to bottom, rgba(8,9,11,.08), rgba(8,9,11,.94)),
+          url("./assets/scenes/convenience.jpg") center / cover no-repeat;
+      }
+      .me-card { position: relative; margin: -58px 20px 0; padding: 16px; border-radius: 24px; text-align: center; }
+      .me-card img { width: 104px; height: 104px; margin-top: -52px; object-fit: cover; border-radius: 50%; border: 1px solid rgba(255,255,255,.42); box-shadow: 0 16px 44px rgba(0,0,0,.48); }
+      .me-card h2 { margin-top: 14px; font-size: 28px; }
+      .me-card p { margin-top: 8px; color: var(--muted); font-size: 12px; }
+      .affinity { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+      .affinity div { min-height: 62px; display: grid; place-items: center; border-radius: 16px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); }
+      .affinity strong { display: block; color: var(--gold); font-size: 17px; }
+      .affinity span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+      .settings { display: grid; gap: 2px; margin: 18px 20px 0; }
+      .settings button { height: 54px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,.1); background: transparent; color: var(--ink); font-size: 14px; }
+      .settings span { color: var(--muted); }
+
+      @media (max-width: 760px) {
+        .concept-page { padding: 28px 14px 44px; }
+        .board-header { grid-template-columns: 1fr; }
+        .palette { justify-content: start; }
+        .phone-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="concept-page">
+      <header class="board-header">
+        <div>
+          <span class="kicker">Idol 102 / UI direction</span>
+          <h1>Close, but still real.</h1>
+          <p>
+            Dark mode 基底，暖金作为关系推进高亮；加入德国 K-pop 粉丝会熟悉的城市夜街、Späti、tram-stop 气质，同时保留慢热恋爱陪伴、聊天和回忆沉淀。
+          </p>
+        </div>
+        <div class="palette" aria-label="concept palette">
+          <i class="swatch"></i><i class="swatch"></i><i class="swatch"></i><i class="swatch"></i><i class="swatch"></i>
+        </div>
+      </header>
+
+      <section class="phone-grid" aria-label="common app screens">
+        <article class="concept-card">
+          <div class="concept-label"><strong>01 Onboarding</strong><span>member pick / dream tone</span></div>
+          <div class="phone">
+            <div class="status"><span>22:14</span><span>5G 82%</span></div>
+            <section class="screen splash">
+              <div class="splash-copy">
+                <span class="screen-label">Berlin fan night</span>
+                <h2>Idol<br />102</h2>
+                <p>从一次梦里的后台擦肩，慢慢变成每天会想起的人。</p>
+              </div>
+              <div class="splash-bottom">
+                <div class="member-strip">
+                  <img src="./assets/characters/bang_chan.png" alt="" />
+                  <img src="./assets/characters/felix.png" alt="" />
+                  <img src="./assets/characters/hyunjin.png" alt="" />
+                  <img src="./assets/characters/seungmin.png" alt="" />
+                </div>
+                <button class="primary">选择 TA 开始</button>
+              </div>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <div class="concept-label"><strong>02 Home</strong><span>relationship hub / memories</span></div>
+          <div class="phone">
+            <div class="status"><span>22:16</span><span>5G 81%</span></div>
+            <section class="screen home-screen">
+              <div class="home-top">
+                <div>
+                  <h2>Hyunjin</h2>
+                  <p>相识第 12 天 · Stage 2: 熟悉</p>
+                </div>
+                <button class="round-btn">♡</button>
+              </div>
+              <article class="stage-card glass">
+                <h3>今天的距离感刚刚好</h3>
+                <p>他记得你提过柏林冬天很长，所以发来一首适合夜车回家的歌。</p>
+              </article>
+              <div class="memory-row">
+                <article class="polaroid"><i style="background-image:url('./assets/scenes/company.jpg')"></i><strong>公司楼下</strong><span>DAY 01</span></article>
+                <article class="polaroid"><i style="background-image:url('./assets/scenes/coffee_shop.jpg')"></i><strong>Kaffee pause</strong><span>DAY 07</span></article>
+                <article class="polaroid"><i style="background-image:url('./assets/scenes/park.jpg')"></i><strong>雨后散步</strong><span>DAY 12</span></article>
+              </div>
+              <nav class="nav glass"><button class="active">Home</button><button>Chat</button><button>Scene</button><button>Me</button></nav>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <div class="concept-label"><strong>03 Chat</strong><span>companionship / gentle romance</span></div>
+          <div class="phone">
+            <div class="status"><span>22:18</span><span>5G 80%</span></div>
+            <section class="screen chat-bg">
+              <header class="chat-header">
+                <img class="avatar" src="./assets/characters/felix.png" alt="" />
+                <div><strong>Felix</strong><span>刚刚在线 · 异地陪伴中</span></div>
+                <span class="pill">Scene</span>
+              </header>
+              <div class="messages">
+                <p class="bubble idol glass">今天练习结束的时候，路过一家小店。它让我想起你说的 Berlin Späti。</p>
+                <p class="bubble user">那你有买香蕉牛奶吗？</p>
+                <p class="bubble idol glass">买了两盒。另一盒先替你留着，好像这样就能假装你也在旁边。</p>
+                <p class="bubble system">关系信号 · 他记住了你的城市和口味偏好</p>
+                <p class="bubble idol glass">今晚回家路上冷吗？到家跟我说一声。</p>
+              </div>
+              <div class="reply-chips"><span class="pill">我到家啦</span><span class="pill">想听你今天的歌</span><span class="pill">发起便利店 Scene</span></div>
+              <div class="input-bar glass"><span>发消息...</span><button>↑</button></div>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <div class="concept-label"><strong>04 Scene Map</strong><span>street map / pin overlay</span></div>
+          <div class="phone">
+            <div class="status"><span>22:21</span><span>5G 79%</span></div>
+            <section class="screen map-screen">
+              <div class="map-bg"></div>
+              <div class="map-shade"></div>
+              <header class="map-head">
+                <div><span class="screen-label">Scene</span><h2>今晚可以去哪</h2></div>
+                <span class="pill">Berlin · Seoul</span>
+              </header>
+              <span class="pin cafe"><small>📍</small>咖啡厅</span>
+              <span class="pin park"><small>📍</small>公园</span>
+              <span class="pin practice"><small>📍</small>练习室</span>
+              <span class="pin store"><small>📍</small>Späti</span>
+              <span class="pin company"><small>📍</small>公司</span>
+              <article class="map-sheet glass">
+                <h3>公司楼下 · 还亮着灯</h3>
+                <p>点位用街道底图加 UI 覆盖，后续可以替换成生成图或真实城市插画。</p>
+                <div class="weather-row"><span class="pill">17°C</span><span class="pill">U8 夜车</span><span class="pill">低调见面</span></div>
+              </article>
+              <nav class="nav glass"><button>Home</button><button>Chat</button><button class="active">Scene</button><button>Me</button></nav>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <div class="concept-label"><strong>05 Invite Detail</strong><span>scene events / contact choice</span></div>
+          <div class="phone">
+            <div class="status"><span>22:23</span><span>5G 79%</span></div>
+            <section class="screen detail-screen">
+              <div class="back-row"><button class="round-btn">‹</button><span class="pill">📍 公司</span></div>
+              <article class="event-panel glass">
+                <span class="screen-label">Invite</span>
+                <h2>顺路见一面</h2>
+                <p>这不是任务，也不是约会宣言。更像在很长的一天之后，想确认彼此都还好。</p>
+                <div class="event-list">
+                  <div class="event"><div><strong>带一杯温热浓可可</strong><span>解压、慢热、低冒犯</span></div><button>＋</button></div>
+                  <div class="event"><div><strong>去天台吹风看夜景</strong><span>关系推进更明显</span></div><button>＋</button></div>
+                  <div class="event"><div><strong>用员工卡抢最后三明治</strong><span>轻松生活感</span></div><button>＋</button></div>
+                </div>
+                <button class="primary">发给 Felix</button>
+              </article>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <div class="concept-label"><strong>06 Memory</strong><span>polaroid save / me page signals</span></div>
+          <div class="phone">
+            <div class="status"><span>22:31</span><span>5G 76%</span></div>
+            <section class="screen memory-screen">
+              <div class="memory-main">
+                <div class="title-row">
+                  <div><span>Memory saved</span><h2>这段可以留下来</h2></div>
+                  <button class="round-btn">×</button>
+                </div>
+                <article class="big-polaroid">
+                  <img src="./assets/scenes/convenience.jpg" alt="" />
+                  <h3>Späti 门口的香蕉牛奶</h3>
+                  <p>你们在夜里分掉一盒拉面。他说下次想知道你常坐哪一班夜车。</p>
+                </article>
+                <div class="memory-actions"><button class="ghost">稍后编辑</button><button class="primary">保存回主页</button></div>
+              </div>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+
+        <article class="concept-card">
+          <div class="concept-label"><strong>07 Me</strong><span>profile / preferences</span></div>
+          <div class="phone">
+            <div class="status"><span>22:34</span><span>5G 75%</span></div>
+            <section class="screen me-screen">
+              <div class="me-cover"></div>
+              <article class="me-card glass">
+                <img src="./assets/characters/in.png" alt="" />
+                <h2>Mina</h2>
+                <p>Berlin · 喜欢雨天、薄荷巧克力、深夜消息</p>
+                <div class="affinity">
+                  <div><p><strong>12</strong><span>相识天数</span></p></div>
+                  <div><p><strong>4</strong><span>共同回忆</span></p></div>
+                  <div><p><strong>L1</strong><span>已记住信息</span></p></div>
+                </div>
+              </article>
+              <div class="settings">
+                <button>我的偏好 <span>›</span></button>
+                <button>关系记忆 <span>›</span></button>
+                <button>夜间陪伴设置 <span>›</span></button>
+                <button>语言与城市氛围 <span>Deutsch / 中文</span></button>
+              </div>
+              <nav class="nav glass"><button>Home</button><button>Chat</button><button>Scene</button><button class="active">Me</button></nav>
+            </section>
+            <i class="home-indicator"></i>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

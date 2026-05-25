@@ -1,0 +1,84 @@
+/* 组件库：只放跨页面可复用的基础视觉能力。 */
+.ui-glass,
+.ui-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.045)),var(--glass-bg);
+  border:1px solid var(--glass-line);
+  box-shadow:var(--shadow-panel),inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter:blur(var(--glass-blur)) saturate(1.18);
+}
+
+.ui-card{border-radius:var(--radius-lg)}
+.ui-pill{border-radius:var(--radius-pill)}
+
+.ui-button,
+button{
+  transition:transform var(--motion-fast),background var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),opacity var(--motion-fast),filter var(--motion-fast);
+}
+
+.ui-button:active,
+button:active{transform:translateY(1px) scale(.985)}
+
+.ui-icon-button{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 12px 34px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.22);
+  color:var(--color-cream);
+  backdrop-filter:blur(16px);
+}
+
+.ui-primary-button,
+.primary{
+  min-height:48px;
+  border-radius:var(--radius-md);
+  background:linear-gradient(135deg,#ead7ad 0%,#c9a96e 52%,#a8834b 100%);
+  color:#11100d;
+  box-shadow:0 16px 40px rgba(201,169,110,.25),inset 0 1px 0 rgba(255,255,255,.42);
+  font-weight:800;
+}
+
+.ui-secondary-button{
+  min-height:42px;
+  border-radius:var(--radius-pill);
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.07);
+  color:var(--color-cream);
+  backdrop-filter:blur(14px);
+}
+
+.ui-input,
+input{
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(255,255,255,.075);
+  color:var(--color-text);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.ui-input:focus,
+input:focus{
+  border-color:rgba(201,169,110,.56);
+  box-shadow:0 0 0 4px rgba(201,169,110,.09),inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.ui-avatar{
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  object-fit:cover;
+  background:linear-gradient(145deg,rgba(201,169,110,.2),rgba(255,255,255,.06));
+  border:1px solid rgba(201,169,110,.4);
+  color:var(--color-gold);
+  font-weight:800;
+}
+
+.ui-eyebrow{
+  font-size:var(--type-caption);
+  font-weight:800;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--color-gold-soft);
+}

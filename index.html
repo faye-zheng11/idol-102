@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Idol 102 Live Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./src/ui/tokens.css" />
+    <link rel="stylesheet" href="./src/ui/components.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-stage" id="appStage">
+      <div class="phone-scaler" id="phoneScaler">
+        <article class="phone-device" id="phoneDevice" aria-label="Idol 102">
+            <div class="phone-viewport" id="phoneViewport">
+              <header class="status-bar" aria-hidden="true">
+                <span>22:14</span>
+                <span>5G  82%</span>
+              </header>
+
+              <div class="screen-stack" id="screenStack">
+                <section id="screen-splash" class="screen active splash-screen screen-hit" data-action="start">
+                  <div class="grain"></div>
+                  <div class="splash-orb"></div>
+                  <div class="splash-copy">
+                    <span>Idol 102</span>
+                    <h1>가까이,<br />지금</h1>
+                    <p>A different kind of closeness</p>
+                  </div>
+                  <button class="tap-button" data-action="start">点击开始</button>
+                </section>
+
+                <section id="screen-select" class="screen select-screen">
+                  <header class="select-header">
+                    <span>Stray Kids</span>
+                    <h2>你想开启谁的秘密线？</h2>
+                  </header>
+                  <div id="memberSlider" class="member-slider"></div>
+                  <div class="select-arrows">
+                    <button data-action="prev-member">‹</button>
+                    <button data-action="next-member">›</button>
+                  </div>
+                  <div id="memberDots" class="member-dots"></div>
+                  <button class="primary fixed-bottom" data-action="select-member">选择TA</button>
+                </section>
+
+                <section id="screen-dream-intro" class="screen dream-intro-screen">
+                  <div class="dream-bg"></div>
+                  <div class="dream-veil"></div>
+                  <article class="dream-narration">
+                    <span>演唱会后台</span>
+                    <p>
+                      演出刚结束，走廊里还有未散的灯光和人声。你并不确定自己为什么会在那里，只记得门被推开时，他看见了你。
+                    </p>
+                  </article>
+                  <button class="tap-button" data-action="enter-dream">继续</button>
+                </section>
+
+                <section id="s-ob" class="screen dream-chat-screen" data-screen="ob">
+                  <div class="dream-scene-bg" id="dreamSceneBg"></div>
+                  <div class="dream-dim-veil" id="dreamDimVeil" aria-hidden="true"></div>
+                  <header class="scene-top">
+                    <span>Backstage · after concert</span>
+                    <strong id="dreamMemberName">Felix</strong>
+                  </header>
+                  <div id="dreamMessages" class="dream-messages"></div>
+                  <div id="dreamChoices" class="choice-stack"></div>
+                  <div id="dreamErrorOverlay" class="dream-error-overlay hidden">
+                    <p class="dream-error-text">[ ERROR: STORY DISTURBED - CONNECTION INTERRUPTED ]</p>
+                    <button type="button" class="dream-reload-btn" data-action="dream-reload">[ 重新加载 ]</button>
+                  </div>
+                </section>
+
+                <section id="s-transition" class="screen wake-screen transition-screen" data-screen="transition">
+                  <div class="wake-rings">
+                    <i></i><i></i><i></i>
+                  </div>
+                  <article class="transition-copy">
+                    <span>Then</span>
+                    <h2 class="transition-title">── 喂，小心！</h2>
+                    <div id="transitionStream" class="transition-stream"></div>
+                    <button class="tap-button transition-tap hidden" data-action="enter-real">[ 睁开眼 → ]</button>
+                  </article>
+                </section>
+
+                <section id="screen-real-scene" class="screen real-scene-screen">
+                  <div class="jyp-bg"></div>
+                  <header class="scene-top dark">
+                    <button class="backless">Scene</button>
+                    <div>
+                      <strong>JYP 楼下</strong>
+                      <span id="realSceneSub">选择你们为什么在这里相遇</span>
+                    </div>
+                  </header>
+                  <div id="realMessages" class="real-messages"></div>
+                  <div id="realChoices" class="choice-stack"></div>
+                </section>
+                <div id="whiteWakeTransition" class="white-wake-transition hidden" aria-hidden="true"></div>
+
+                <section id="screen-home" class="screen home-screen">
+                  <div id="home-page" class="home-page">
+                  <div id="homePoster" class="home-poster">
+                    <div class="poster-grain"></div>
+                    <div class="poster-vignette"></div>
+                    <button class="poster-edge left" data-action="poster-prev" aria-label="上一张"></button>
+                    <button class="poster-edge right" data-action="poster-next" aria-label="下一张"></button>
+                  </div>
+
+                  <div id="posterUi" class="home-ui">
+                    <header class="home-topbar">
+                      <div class="home-stats">
+                        <h2 id="posterName">Felix</h2>
+                        <p id="posterTopDays">相识第 1 天</p>
+                      </div>
+                      <div class="home-action-hub">
+                        <button class="discover-button" data-action="toggle-discover" aria-label="发现其他成员">
+                          🌟
+                          <i id="discoverDot" class="notif-dot hidden"></i>
+                        </button>
+                        <button class="notify-button" type="button" data-action="toggle-notifications" aria-label="通知">🔔<i id="notifyDot" class="notif-dot hidden">!</i></button>
+                      </div>
+                    </header>
+
+                    <button type="button" class="stage-capsule" aria-label="当前关系阶段">
+                      <span id="posterStage">Stage 1: 熟悉</span>
+                    </button>
+
+                    <section id="chronicleTimeline" class="chronicle-timeline" aria-label="时光集"></section>
+                  </div>
+                  </div>
+
+                  <aside id="discoverDrawer" class="discover-drawer">
+                    <div class="drawer-handle"></div>
+                    <h3>发现其他成员</h3>
+                    <div id="drawerMembers" class="drawer-members"></div>
+                  </aside>
+
+                  <div id="memoryOverlay" class="memory-overlay hidden" data-action="close-memory">
+                    <article class="memory-polaroid">
+                      <div id="memoryPhoto" class="memory-photo"></div>
+                      <div class="memory-copy">
+                        <h3>JYP 楼下</h3>
+                        <p id="memorySummary">那天在 JYP 楼下，你们第一次真正说上话。他主动添加了你的聊天方式。</p>
+                        <span id="memoryMeta">📅 2026.05.18 · 📍 JYP 楼下 CODE-00</span>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+
+                <section id="screen-chat" class="screen chat-screen">
+                  <header class="chat-topbar">
+                    <div class="chat-avatar" id="chatAvatar">F</div>
+                    <div>
+                      <strong id="chatName">Felix</strong>
+                      <span>消息 · 异地模式</span>
+                    </div>
+                    <button data-nav="scene">场景</button>
+                  </header>
+                  <div id="chatMessages" class="chat-messages"></div>
+                  <form id="chatForm" class="chat-input-row">
+                    <input id="chatInput" autocomplete="off" placeholder="发消息…" />
+                    <button type="submit">↑</button>
+                  </form>
+                </section>
+
+                <section id="screen-scene" class="screen scene-list-screen">
+                  <header class="plain-header">
+                    <div>
+                      <span>Scene</span>
+                      <h2>你们可能会去的地方</h2>
+                    </div>
+                  </header>
+                  <div class="scene-list">
+                    <article>
+                      <div class="scene-thumb jyp"></div>
+                      <div>
+                        <span>刚刚发生</span>
+                        <strong>JYP 楼下</strong>
+                        <p>你们第一次真正说上话的地方。</p>
+                      </div>
+                    </article>
+                    <article>
+                      <div class="scene-thumb store"></div>
+                      <div>
+                        <span>也许以后</span>
+                        <strong>便利店</strong>
+                        <p>练习后，楼下还亮着的地方。</p>
+                      </div>
+                    </article>
+                    <article>
+                      <div class="scene-thumb practice"></div>
+                      <div>
+                        <span>还没到那里</span>
+                        <strong>练习室外</strong>
+                        <p>等待有时候也是一种靠近。</p>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+
+                <section id="screen-me" class="screen me-screen">
+                  <div class="me-scroll">
+                    <section class="me-profile-card">
+                      <div class="me-cover" aria-hidden="true"></div>
+                      <div class="me-profile-content">
+                        <img id="meAvatar" class="me-avatar" alt="用户头像" />
+                        <h2 id="visibleUserName">还不知道</h2>
+                        <p class="me-account">
+                          <span id="meUid">UID: --</span>
+                          <span id="meEmail">user@example.com</span>
+                        </p>
+                      </div>
+                    </section>
+                    <nav class="me-function-list" aria-label="系统功能">
+                      <button type="button">评分我们<span>&gt;</span></button>
+                      <button type="button">意见反馈<span>&gt;</span></button>
+                      <button type="button">隐私政策<span>&gt;</span></button>
+                      <button type="button">服务条款<span>&gt;</span></button>
+                      <button type="button">账号退出<span>&gt;</span></button>
+                    </nav>
+                  </div>
+                </section>
+              </div>
+
+              <nav class="bottom-nav hidden" id="bottomNav">
+                <button data-nav="home" class="active">Home</button>
+                <button data-nav="chat">Chat<i id="chatDot" class="nav-dot hidden"></i></button>
+                <button data-nav="scene">Scene</button>
+                <button data-nav="me">Me</button>
+              </nav>
+
+              <div id="toast" class="toast hidden"></div>
+              <div class="home-indicator" aria-hidden="true"></div>
+            </div>
+        </article>
+      </div>
+    </main>
+
+    <script src="./shell.js"></script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
