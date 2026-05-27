@@ -1,15 +1,21 @@
 import { createMemoryObject, persistMemoryCapsules } from "./home.js";
 import { uiCopy } from "../ui/copy-library.js";
-import { remoteSceneImages } from "../ui/image-library.js";
+import { sceneImages } from "../ui/image-library.js";
 
 const STYLE_ID = "chat-module-styles";
 const DEFAULT_FIRST_MESSAGE = "对了，刚刚忘了问你，你叫什么名字了。";
+const CHAT_ACTION_ICONS = {
+  discover: "./assets/auth/add-friend.png",
+  notify: "./assets/auth/notify.png",
+};
 const SCENE_BACKGROUNDS = {
-  coffee_shop: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.28)),url('${remoteSceneImages.coffeeShop}')`,
-  park: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.24)),url('${remoteSceneImages.park}')`,
-  convenience_store: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.25)),url('${remoteSceneImages.convenienceStore}')`,
-  practice_room: `linear-gradient(to top,rgba(9,9,9,.9),rgba(9,9,9,.28)),url('${remoteSceneImages.practiceRoom}')`,
-  company: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.24)),url('${remoteSceneImages.company}')`,
+  coffee_shop: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.28)),url('${sceneImages.city_map}')`,
+  park: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.24)),url('${sceneImages.city_map}')`,
+  convenience_store: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.25)),url('${sceneImages.city_map}')`,
+  practice_room: `linear-gradient(to top,rgba(9,9,9,.9),rgba(9,9,9,.28)),url('${sceneImages.city_map}')`,
+  company: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.24)),url('${sceneImages.city_map}')`,
+  mall: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.25)),url('${sceneImages.city_map}')`,
+  apartment: `linear-gradient(to top,rgba(9,9,9,.88),rgba(9,9,9,.25)),url('${sceneImages.city_map}')`,
 };
 const SCENE_META = {
   coffee_shop: {
@@ -42,6 +48,18 @@ const SCENE_META = {
     voiceover: "电梯厅的灯光安静地亮着，玻璃窗外的城市像一片缓慢移动的星河。忙碌暂时停在门外，你们在这一刻终于见面。",
     opener: "你真的来了。刚才还觉得今天会一直忙到没有尽头。",
     memoryTitle: "《公司夜色里的短暂见面》",
+  },
+  mall: {
+    placeName: "商场",
+    voiceover: "商场的玻璃穹顶映着夜色，橱窗灯光一层层亮起来。你们顺着扶梯慢慢往上走，把匆忙藏进人群之后。",
+    opener: "这里晚上还挺热闹的。要不要先从你想逛的那家店开始？",
+    memoryTitle: "《商场玻璃廊桥的夜色》",
+  },
+  apartment: {
+    placeName: "公寓",
+    voiceover: "公寓楼下的路灯把树影照得很软，阳台上一格一格暖光安静亮着。你站在门口等他，像等一个只属于夜晚的小答案。",
+    opener: "我下来了。你真的只是顺路吗？",
+    memoryTitle: "《公寓楼下的一杯热饮》",
   },
 };
 
@@ -78,8 +96,10 @@ export function createChatModule(deps = {}) {
     root.innerHTML = `
       <div class="chat-module chat-list-view">
         <header class="chat-list-header">
-          <span>Chat</span>
-          <h2>${uiCopy.chat.title}</h2>
+          <div>
+            <h2>${uiCopy.chat.title}</h2>
+          </div>
+          ${renderChatActionHub()}
         </header>
         <section class="chat-contact-list">
           ${
@@ -94,6 +114,7 @@ export function createChatModule(deps = {}) {
     root.querySelectorAll("[data-chat-contact]").forEach((row) => {
       row.addEventListener("click", () => openContact(row.dataset.chatContact));
     });
+    syncActionDots();
   }
 
   function renderChatDetail(characterId) {
@@ -113,12 +134,13 @@ export function createChatModule(deps = {}) {
         ${sceneBg?.placeId ? renderSceneHeader(sceneMeta) : renderStandardHeader(contact)}
         <div class="chat-detail-messages" data-chat-stream>
           ${sceneBg?.placeId ? renderVoiceover(sceneMeta) : ""}
-          ${getMessageStream(characterId).map(renderMessageBubble).join("")}
+          ${getMessageStream(characterId).map((message) => renderMessageBubble(message, contact)).join("")}
         </div>
         ${pendingInvite ? renderInviteComposer(pendingInvite) : ""}
-        <form class="chat-detail-input" data-chat-form>
+        <form class="chat-detail-input ${sceneBg?.placeId ? "scene-chat-input" : ""}" data-chat-form>
+          ${sceneBg?.placeId ? `<button class="chat-paren-btn" type="button" data-chat-paren aria-label="插入括号">（）</button>` : ""}
           <input autocomplete="off" placeholder="${escapeAttr(pendingInvite?.shortDraft || uiCopy.chat.inputPlaceholder)}" value="${escapeAttr(draftValue)}" />
-          <button type="submit">发送</button>
+          <button type="submit" aria-label="发送"><span aria-hidden="true"></span></button>
         </form>
       </div>
     `;
@@ -127,10 +149,12 @@ export function createChatModule(deps = {}) {
     root.querySelector("[data-chat-scene]")?.addEventListener("click", () => navigate("scene"));
     root.querySelector("[data-chat-leave-scene]")?.addEventListener("click", () => openMemoryPolaroid(characterId));
     root.querySelector("[data-chat-form]").addEventListener("submit", handleSubmit);
+    root.querySelector("[data-chat-paren]")?.addEventListener("click", insertParentheses);
     if (pendingInvite) {
       const input = root.querySelector("[data-chat-form] input");
       setTimeout(() => input?.focus(), 180);
     }
+    syncActionDots();
     scrollToBottom();
   }
 
@@ -168,6 +192,18 @@ export function createChatModule(deps = {}) {
       createdAt: new Date().toISOString(),
     });
     renderChatDetail(activeCharacterId);
+  }
+
+  function insertParentheses(event) {
+    const form = event.currentTarget.closest("[data-chat-form]");
+    const input = form?.querySelector("input");
+    if (!input) return;
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? start;
+    input.value = `${input.value.slice(0, start)}（）${input.value.slice(end)}`;
+    const caret = start + 1;
+    input.focus();
+    input.setSelectionRange(caret, caret);
   }
 
   function unlockContact(characterId, name, extra = {}) {
@@ -461,31 +497,77 @@ function renderStandardHeader(contact) {
 function renderSceneHeader(meta) {
   return `
     <header class="chat-scene-header">
-      <button type="button" class="chat-leave-scene" data-chat-leave-scene>‹ 离开</button>
+      <div class="chat-scene-topline">
+        <button type="button" class="chat-leave-scene" data-chat-leave-scene>‹ 离开</button>
+      </div>
       <div class="chat-scene-coordinate">📍 城市坐标 · ${escapeHtml(meta.placeName)}</div>
     </header>
   `;
+}
+
+function renderChatActionHub() {
+  return `
+    <div class="chat-action-hub" aria-label="聊天快捷功能">
+      <button class="chat-action-button chat-discover-button" type="button" data-action="toggle-discover" aria-label="发现其他成员">
+        <img src="${CHAT_ACTION_ICONS.discover}" alt="" aria-hidden="true" />
+        <i id="discoverDot" class="notif-dot hidden"></i>
+      </button>
+      <button class="chat-action-button chat-notify-button" type="button" data-action="toggle-notifications" aria-label="通知">
+        <img src="${CHAT_ACTION_ICONS.notify}" alt="" aria-hidden="true" />
+        <i id="notifyDot" class="notif-dot hidden">!</i>
+      </button>
+    </div>
+  `;
+}
+
+function syncActionDots() {
+  const state = window.AppStore?.state || {};
+  document.querySelectorAll("#discoverDot").forEach((dot) => dot.classList.toggle("hidden", true));
+  document.querySelectorAll("#notifyDot").forEach((dot) => dot.classList.toggle("hidden", !state.hasNotification));
 }
 
 function renderVoiceover(meta) {
   return `<p class="chat-scene-voiceover">${escapeHtml(meta.voiceover)}</p>`;
 }
 
-function renderMessageBubble(message) {
+function renderMessageBubble(message, contact) {
   if (message.type === "scene_invite_bundle") {
+    const background = SCENE_BACKGROUNDS[message.placeId] || SCENE_BACKGROUNDS.company;
     return `
-      <div class="chat-scene-bundle bubble user">
+      <div class="chat-scene-bundle" style="--invite-bg:${background}">
         <div class="chat-location-card">
-          <span>📍 城市坐标</span>
-          <strong>${escapeHtml(message.placeName || "")}</strong>
-          <p>${escapeHtml(message.eventName || "")}</p>
+          <span>${escapeHtml(message.placeName || "")}</span>
+          <strong>${escapeHtml(message.eventName || "")}</strong>
         </div>
-        <p>${escapeHtml(message.text || "")}</p>
       </div>
     `;
   }
   const type = message.role === "user" ? "user" : "idol";
-  return `<div class="bubble ${type}">${escapeHtml(message.text || message.content || "")}</div>`;
+  if (type === "idol") return renderIdolBubble(message.text || message.content || "", contact);
+  return `<div class="bubble ${type}">${renderMessageText(message.text || message.content || "")}</div>`;
+}
+
+function renderIdolBubble(text, contact) {
+  return `
+    <div class="bubble-row idol-row">
+      ${renderAvatar({ ...(contact || {}), name: contact?.name || "idol" })}
+      <div class="bubble idol">${escapeHtml(text)}</div>
+    </div>
+  `;
+}
+
+function renderMessageText(text) {
+  const raw = String(text ?? "");
+  let html = "";
+  let index = 0;
+  const pattern = /（([^）]*)）/g;
+  for (const match of raw.matchAll(pattern)) {
+    html += escapeHtml(raw.slice(index, match.index));
+    html += `<em class="aside-text">（${escapeHtml(match[1])}）</em>`;
+    index = match.index + match[0].length;
+  }
+  html += escapeHtml(raw.slice(index));
+  return html;
 }
 
 function renderInviteComposer(invite) {
@@ -542,11 +624,13 @@ function buildMemoryContent(placeId, placeName) {
 
 function getSceneImageUrl(placeId) {
   return {
-    coffee_shop: remoteSceneImages.coffeeShop,
-    park: remoteSceneImages.park,
-    convenience_store: remoteSceneImages.convenienceStore,
-    practice_room: remoteSceneImages.practiceRoom,
-    company: remoteSceneImages.company,
+    coffee_shop: sceneImages.city_map,
+    park: sceneImages.city_map,
+    convenience_store: sceneImages.city_map,
+    practice_room: sceneImages.city_map,
+    company: sceneImages.city_map,
+    mall: sceneImages.city_map,
+    apartment: sceneImages.city_map,
   }[placeId] || "";
 }
 
@@ -601,24 +685,29 @@ function injectStyles(doc) {
   style.textContent = `
     .chat-module{height:100%;display:flex;flex-direction:column;background:radial-gradient(circle at 50% 0,rgba(148,184,255,.08),transparent 34%),var(--black);color:var(--text)}
     .chat-list-view{padding:54px 18px 88px}
+    .chat-list-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+    .chat-list-header>div{min-width:0}
     .chat-list-header span{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold2)}
-    .chat-list-header h2{margin-top:7px;font-family:var(--font-kr);font-weight:400;font-size:28px;line-height:1.2}
+    .chat-list-header h2{margin-top:0;font-family:var(--font-kr);font-weight:400;font-size:28px;line-height:1.2}
+    .chat-action-hub{display:flex;align-items:center;gap:10px;flex:0 0 auto}.chat-action-button{position:relative;width:42px;height:42px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.24);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,138,174,.075)),rgba(38,31,43,.58);box-shadow:0 12px 32px rgba(0,0,0,.26),0 0 18px rgba(255,138,174,.12),inset 0 1px 0 rgba(255,255,255,.24);backdrop-filter:blur(16px);transition:transform .18s ease,background .18s ease,border-color .18s ease}.chat-action-button:active{transform:scale(.94);background:rgba(255,138,174,.2);border-color:rgba(255,255,255,.42)}.chat-action-button img{width:22px;height:22px;object-fit:contain;display:block;filter:drop-shadow(0 2px 8px rgba(0,0,0,.38))}.chat-discover-button img{width:23px;height:23px}.chat-action-button .notif-dot{right:1px;top:1px}
     .chat-contact-list{display:flex;flex-direction:column;gap:10px;margin-top:20px}
     .chat-contact-row{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:13px;border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-lg);background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.035)),rgba(20,22,27,.76);box-shadow:0 14px 40px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px)}
     .chat-module-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:linear-gradient(145deg,rgba(201,169,110,.2),rgba(255,255,255,.06));border:1px solid rgba(201,169,110,.42);display:grid;place-items:center;color:var(--gold);font-size:13px;font-weight:800}
     .chat-contact-copy{min-width:0}.chat-contact-copy strong{display:block;font-size:15px}.chat-contact-copy p{margin-top:5px;color:var(--soft);font-size:12px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .chat-unread-dot{width:9px;height:9px;border-radius:50%;background:#ff3b4f;box-shadow:0 0 12px rgba(255,59,79,.85)}
     .chat-empty{color:var(--soft);font-size:13px;margin-top:24px}
-    .chat-detail-view{position:relative;min-height:0;background:var(--black);overflow:hidden}.chat-detail-view.scene-immersive:before{content:"";position:absolute;inset:-12px;background-image:var(--chat-scene-bg);background-size:cover;background-position:center;filter:blur(3px) saturate(.95);opacity:.84}.chat-detail-view.scene-immersive:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(9,9,9,.34),rgba(9,9,9,.64));pointer-events:none}
-    .chat-detail-topbar{position:relative;z-index:2;flex-shrink:0;padding:54px 16px 12px;display:grid;grid-template-columns:34px 38px 1fr auto;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.12);background:rgba(8,9,11,.42);backdrop-filter:blur(16px)}
+    .chat-detail-view{position:relative;min-height:0;background:var(--black);overflow:hidden}.chat-detail-view.scene-immersive:before{content:"";position:absolute;inset:-12px;background-image:var(--chat-scene-bg);background-size:cover;background-position:center;filter:blur(3px) saturate(.95);opacity:.84}.chat-detail-view.scene-immersive:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(8,12,18,.88) 0,rgba(8,12,18,.48) 96px,rgba(9,9,9,.38) 190px,rgba(9,9,9,.68));pointer-events:none}
+    .chat-detail-topbar{position:relative;z-index:2;flex-shrink:0;padding:16px 16px 12px;display:grid;grid-template-columns:34px 38px minmax(0,1fr) auto;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.12);background:rgba(8,9,11,.42);backdrop-filter:blur(16px)}
     .chat-back-btn{width:34px;height:34px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--gold);font-size:24px;line-height:1}
     .chat-detail-topbar .chat-module-avatar{width:38px;height:38px;font-size:12px}
     .chat-title-block{min-width:0}.chat-title-block strong{display:block;font-size:15px}.chat-title-block span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
-    .chat-scene-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:var(--cream);border-radius:14px;padding:8px 10px;font-size:12px}
-    .chat-scene-header{position:relative;z-index:2;flex-shrink:0;padding:54px 16px 10px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+    .chat-scene-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);color:var(--cream);border-radius:14px;padding:8px 10px;font-size:12px;white-space:nowrap}
+    .chat-scene-header{position:relative;z-index:2;flex-shrink:0;padding:16px 16px 10px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+    .chat-scene-topline{width:100%;display:flex;align-items:center;justify-content:flex-start;gap:12px}
     .chat-leave-scene{padding:8px 12px;border-radius:999px;background:rgba(10,10,9,.36);border:1px solid rgba(255,255,255,.14);color:rgba(247,241,232,.86);backdrop-filter:blur(14px);font-size:12px}
     .chat-scene-coordinate{max-width:100%;padding:10px 14px;border-radius:999px;background:rgba(247,241,232,.12);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(0,0,0,.22);color:rgba(247,241,232,.9);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .chat-detail-messages{position:relative;z-index:2;flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:14px 18px 16px;scrollbar-width:none}.chat-detail-messages::-webkit-scrollbar{display:none}
+    .chat-detail-messages .bubble-row{max-width:86%;display:flex;align-items:flex-end;gap:8px;animation:bubble .25s ease}.chat-detail-messages .idol-row{align-self:flex-start}.chat-detail-messages .bubble-row .chat-module-avatar{width:30px;height:30px;flex:0 0 30px;border-color:rgba(255,138,174,.44)}.chat-detail-messages .bubble-row .bubble{max-width:calc(100% - 38px);animation:none}
     .chat-scene-voiceover{align-self:center;max-width:88%;margin:4px auto 8px;color:rgba(247,241,232,.68);font-family:var(--font-kr);font-size:12px;font-style:italic;font-weight:300;line-height:1.75;text-align:center;text-shadow:0 0 14px rgba(255,255,255,.18);animation:fadeUp .4s ease}
     .scene-immersive .bubble.user{background:rgba(10,10,9,.48);color:rgba(247,241,232,.94);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(16px);box-shadow:0 12px 34px rgba(0,0,0,.24)}
     .scene-immersive .bubble.idol{background:rgba(247,241,232,.68);color:#15120e;border:1px solid rgba(255,255,255,.36);backdrop-filter:blur(18px);box-shadow:0 12px 34px rgba(0,0,0,.2)}
@@ -626,10 +715,12 @@ function injectStyles(doc) {
     .chat-detail-input{position:relative;z-index:2;flex-shrink:0;display:flex;gap:9px;padding:10px 16px 34px;border-top:1px solid rgba(255,255,255,.12);background:rgba(9,9,9,.36);backdrop-filter:blur(14px)}
     .chat-detail-input input{flex:1;min-width:0;border-radius:22px;padding:11px 15px;outline:none}
     .chat-detail-input input:focus{border-color:var(--gold)}
-    .chat-detail-input button{min-width:54px;border-radius:22px;background:linear-gradient(135deg,#ead7ad,#c9a96e);color:#11100d;font-weight:800;box-shadow:0 12px 30px rgba(201,169,110,.22),inset 0 1px 0 rgba(255,255,255,.34)}
-    .chat-scene-bundle{padding:0;overflow:hidden;background:rgba(201,169,110,.92)!important;color:#19140d!important}.chat-scene-bundle>p{padding:10px 14px 13px;font-size:14px;line-height:1.5}
-    .chat-location-card{padding:13px 14px;border-bottom:.5px solid rgba(0,0,0,.14);background:linear-gradient(135deg,rgba(255,255,255,.36),rgba(255,255,255,.08))}
-    .chat-location-card span{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.72}.chat-location-card strong{display:block;margin-top:5px;font-size:16px}.chat-location-card p{margin-top:4px;font-size:12px;line-height:1.4;opacity:.78}
+    .chat-detail-input button[type="submit"]{min-width:52px;width:52px;height:52px;display:grid;place-items:center;border-radius:18px;background:linear-gradient(135deg,#ffd6e5 0%,#ff8aae 54%,#c25b84 100%);color:#fff;font-weight:800;box-shadow:0 16px 42px rgba(255,138,174,.28),0 0 24px rgba(255,138,174,.2),inset 0 1px 0 rgba(255,255,255,.52)}.chat-detail-input button[type="submit"] span{width:20px;height:20px;display:block;background:#fff;clip-path:polygon(7% 45%,92% 6%,64% 94%,48% 59%)}
+    .chat-paren-btn{flex:0 0 42px;width:42px;height:42px;align-self:center;border-radius:16px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:rgba(255,249,255,.86);font-size:13px;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+    .scene-chat-input{align-items:center}.scene-chat-input input{height:52px}.bubble .aside-text{font-size:.92em;font-style:italic;color:rgba(255,249,255,.62)}
+    .chat-scene-bundle{align-self:flex-end;width:min(82%,304px);min-height:168px;overflow:hidden;border:1px solid rgba(255,255,255,.24);border-radius:22px;background-image:linear-gradient(to top,rgba(8,7,13,.86),rgba(8,7,13,.22) 58%,rgba(255,255,255,.04)),var(--invite-bg);background-size:cover;background-position:center;box-shadow:0 18px 48px rgba(0,0,0,.34),0 0 34px rgba(255,138,174,.2),inset 0 1px 0 rgba(255,255,255,.22);backdrop-filter:blur(10px)}
+    .chat-location-card{height:100%;min-height:168px;display:flex;flex-direction:column;justify-content:space-between;padding:18px 18px 20px;background:linear-gradient(to top,rgba(8,7,13,.72),rgba(8,7,13,.12) 60%,rgba(8,7,13,.28))}
+    .chat-location-card span{display:inline-flex;align-items:center;gap:7px;color:rgba(255,249,255,.92);font-size:13px;font-weight:800;line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.62)}.chat-location-card span:before{content:"";width:8px;height:8px;border:2px solid currentColor;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.08),0 0 14px rgba(255,138,174,.36)}.chat-location-card strong{display:block;max-width:95%;font-family:var(--font-serif);font-size:25px;font-weight:500;line-height:1.12;color:#fff9ff;text-shadow:0 3px 20px rgba(0,0,0,.75),0 0 20px rgba(255,138,174,.26)}
     .chat-scene-transition{position:absolute;z-index:60;inset:0;display:grid;place-items:center;background:rgba(8,8,7,.68);backdrop-filter:blur(18px);transition:opacity .5s ease}
     .chat-scene-transition.fade-out{opacity:0}.chat-transition-copy{text-align:center;color:var(--cream)}.chat-transition-copy strong{display:block;color:var(--gold);font-family:var(--font-kr);font-size:20px;font-weight:300;text-shadow:0 0 22px rgba(201,169,110,.36);animation:transitionBreath 1.4s ease-in-out infinite}.chat-transition-copy span{display:block;margin-top:12px;color:rgba(247,241,232,.76);font-size:13px;letter-spacing:.12em}.chat-transition-copy i{display:block;width:34px;height:34px;margin:28px auto 0;border-radius:50%;border:1px solid rgba(201,169,110,.2);border-top-color:rgba(201,169,110,.82);animation:transitionSpin 1s linear infinite}
     @keyframes transitionBreath{50%{opacity:.62;text-shadow:0 0 34px rgba(201,169,110,.68)}}@keyframes transitionSpin{to{transform:rotate(360deg)}}
@@ -639,6 +730,31 @@ function injectStyles(doc) {
     .chat-polaroid-copy h3{font-family:var(--font-kr);font-size:17px;font-weight:500}.chat-polaroid-copy p{margin-top:8px;font-size:12px;line-height:1.65;color:#514638}.chat-polaroid-copy span{display:block;margin-top:10px;font-size:10px;color:#7a6c5a}
     .chat-polaroid button{width:100%;margin-top:14px;padding:12px;border-radius:999px;background:#221b14;color:#f5efe3;font-weight:700;box-shadow:0 0 20px rgba(201,169,110,.34)}
     @keyframes polaroidPop{from{opacity:0;transform:translateY(18px) scale(.92) rotate(-4deg)}to{opacity:1;transform:translateY(0) scale(1) rotate(-1.4deg)}}
+    .chat-module{background:radial-gradient(circle at 78% 4%,rgba(112,231,255,.08),transparent 28%),linear-gradient(180deg,#10131b,#08070d 66%);color:var(--text)}
+    .chat-list-header span{color:var(--color-gold)}
+    .chat-list-header h2{font-family:var(--font-body);font-weight:800;font-size:30px}
+    .chat-contact-row{border-color:rgba(255,255,255,.15);border-radius:var(--radius-lg);background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,138,174,.045)),rgba(17,20,29,.74);box-shadow:0 18px 52px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.14)}
+    .chat-module-avatar{background:rgba(255,138,174,.16);border-color:rgba(255,138,174,.5);color:#ffd6e5;box-shadow:0 0 18px rgba(255,138,174,.14)}
+    .chat-unread-dot{background:var(--color-rose);box-shadow:0 0 12px rgba(255,138,174,.9)}
+    .chat-detail-view{background:linear-gradient(180deg,#10131b,#08070d 66%)}
+    .chat-detail-view.scene-immersive:after{background:linear-gradient(to bottom,rgba(8,12,18,.88) 0,rgba(8,7,13,.52) 96px,rgba(8,7,13,.38) 190px,rgba(8,7,13,.72))}
+    .chat-detail-topbar,.chat-detail-input{background:rgba(8,7,13,.58);border-color:rgba(255,255,255,.12)}
+    .chat-back-btn,.chat-scene-btn,.chat-leave-scene{border-color:rgba(255,138,174,.2);background:rgba(255,138,174,.1);color:#ffd6e5}
+    .chat-scene-coordinate,.chat-location-pill{border-color:rgba(255,138,174,.2);background:rgba(255,138,174,.11);color:rgba(255,249,255,.86);box-shadow:0 12px 34px rgba(0,0,0,.24),0 0 18px rgba(255,138,174,.12)}
+    .chat-detail-input input{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14)}
+    .chat-detail-input input:focus{border-color:rgba(255,138,174,.62)}
+    .chat-detail-input button{background:linear-gradient(135deg,#ffd6e5 0%,#ff8aae 54%,#c25b84 100%);color:#25101a;box-shadow:0 16px 42px rgba(255,138,174,.28),0 0 24px rgba(255,138,174,.2),inset 0 1px 0 rgba(255,255,255,.52)}
+    .chat-detail-input .chat-paren-btn{background:rgba(255,255,255,.08);color:rgba(255,249,255,.86);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
+    .chat-detail-input button[type="submit"]{color:#fff}.chat-detail-input button[type="submit"] span{background:#fff}
+    .scene-immersive .bubble.user{background:rgba(12,13,21,.56);color:rgba(255,249,255,.94);border-color:rgba(255,138,174,.24)}
+    .scene-immersive .bubble.idol{background:rgba(255,246,236,.78);color:#21131a;border-color:rgba(255,255,255,.42)}
+    .chat-scene-bundle{background-image:linear-gradient(to top,rgba(8,7,13,.86),rgba(8,7,13,.22) 58%,rgba(255,255,255,.04)),var(--invite-bg);color:#fff9ff}
+    .chat-scene-transition{background:radial-gradient(circle at 50% 42%,rgba(255,138,174,.18),rgba(8,7,13,.74));}
+    .chat-transition-copy strong{color:#ffd6e5;text-shadow:0 0 28px rgba(255,138,174,.5)}
+    .chat-transition-copy i{border-color:rgba(255,138,174,.2);border-top-color:rgba(255,138,174,.9)}
+    .chat-memory-overlay{background:radial-gradient(circle at 50% 38%,rgba(255,138,174,.18),rgba(5,5,8,.76) 62%)}
+    .chat-polaroid{background:#fff5ea;border-radius:8px;box-shadow:0 28px 90px rgba(0,0,0,.62),0 0 24px rgba(255,138,174,.14)}
+    .chat-polaroid button{background:linear-gradient(135deg,#ffd6e5,#ff8aae 60%,#c25b84);color:#25101a;box-shadow:0 0 22px rgba(255,138,174,.26)}
   `;
   doc.head.appendChild(style);
 }

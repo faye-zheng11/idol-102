@@ -19,9 +19,9 @@ export const uiCopy = {
     emptyMemory: "故事还没发生",
   },
   chat: {
-    title: "消息",
+    title: "Chat",
     empty: "还没有新的联系人。",
-    remoteMode: "消息 · 异地模式",
+    remoteMode: "Chat · 异地模式",
     inputPlaceholder: "发消息…",
   },
   scene: {

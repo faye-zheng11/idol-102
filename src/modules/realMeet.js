@@ -51,7 +51,7 @@ export function createRealMeetModule(deps = {}) {
 
     getElement("realMessages").innerHTML = "";
     getElement("realChoices").innerHTML = "";
-    getElement("realSceneSub").textContent = "选择你们为什么在这里相遇";
+    getElement("realSceneSub").textContent = "";
     appendBubble("realMessages", "system", "JYP 公司楼下，人声、雨声、车灯和玻璃门里的练习室灯光混在一起。");
     renderSceneChoices();
   }
@@ -87,7 +87,7 @@ export function createRealMeetModule(deps = {}) {
     getElement("realChoices").innerHTML = `
       <form id="realForm" class="scene-free-input">
         <input id="realInput" autocomplete="off" placeholder="回应他…" ${disabled ? "disabled" : ""} />
-        <button type="submit" ${disabled ? "disabled" : ""}>发送</button>
+        <button type="submit" aria-label="发送" ${disabled ? "disabled" : ""}><span aria-hidden="true"></span></button>
       </form>
     `;
     getElement("realForm").addEventListener("submit", (event) => {
@@ -107,15 +107,14 @@ export function createRealMeetModule(deps = {}) {
     history.push({ role: "user", content: text });
     chatRoundCounter += 1;
 
-    const typing = document.createElement("div");
-    typing.className = "bubble idol";
-    typing.textContent = "…";
+    const typing = createIdolBubble("…", activeIdol);
     getElement("realMessages").appendChild(typing);
     getElement("realMessages").scrollTop = getElement("realMessages").scrollHeight;
 
     const forceInstruction = chatRoundCounter === 5 ? FORCE_CONTACT_INSTRUCTION : "";
     const reply = await requestSceneReply(text, forceInstruction);
-    typing.textContent = reply;
+    const typingContent = typing.querySelector(".bubble");
+    if (typingContent) typingContent.textContent = reply;
     history.push({ role: "idol", content: reply });
 
     if (chatRoundCounter === 5) {
@@ -253,8 +252,28 @@ export function createRealMeetModule(deps = {}) {
 function defaultAppendBubble(containerId, type, text) {
   const container = document.getElementById(containerId);
   const bubble = document.createElement("div");
+  if (type === "idol") {
+    const state = window.AppStore?.state || {};
+    container.appendChild(createIdolBubble(text, state.selected));
+    container.scrollTop = container.scrollHeight;
+    return;
+  }
   bubble.className = `bubble ${type}`;
   bubble.textContent = text;
   container.appendChild(bubble);
   container.scrollTop = container.scrollHeight;
+}
+
+function createIdolBubble(text = "", idol = {}) {
+  const row = document.createElement("div");
+  row.className = "bubble-row idol-row";
+  const avatar = document.createElement("img");
+  avatar.className = "bubble-avatar";
+  avatar.src = idol?.image || "";
+  avatar.alt = idol?.name || "idol";
+  const content = document.createElement("div");
+  content.className = "bubble idol";
+  content.textContent = text;
+  row.append(avatar, content);
+  return row;
 }

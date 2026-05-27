@@ -1,7 +1,10 @@
 /* 组件库：只放跨页面可复用的基础视觉能力。 */
 .ui-glass,
 .ui-card{
-  background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.045)),var(--glass-bg);
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.035)),
+    linear-gradient(135deg,rgba(62,34,53,.52),rgba(20,37,49,.42)),
+    var(--glass-bg);
   border:1px solid var(--glass-line);
   box-shadow:var(--shadow-panel),inset 0 1px 0 var(--glass-highlight);
   backdrop-filter:blur(var(--glass-blur)) saturate(1.18);
@@ -19,14 +22,14 @@ button{
 button:active{transform:translateY(1px) scale(.985)}
 
 .ui-icon-button{
-  width:44px;
-  height:44px;
+  width:42px;
+  height:42px;
   display:grid;
   place-items:center;
   border-radius:50%;
-  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06));
+  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,138,174,.08));
   border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 12px 34px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.22);
+  box-shadow:0 12px 34px rgba(0,0,0,.26),0 0 18px rgba(255,138,174,.1),inset 0 1px 0 rgba(255,255,255,.18);
   color:var(--color-cream);
   backdrop-filter:blur(16px);
 }
@@ -34,10 +37,10 @@ button:active{transform:translateY(1px) scale(.985)}
 .ui-primary-button,
 .primary{
   min-height:48px;
-  border-radius:var(--radius-md);
-  background:linear-gradient(135deg,#ead7ad 0%,#c9a96e 52%,#a8834b 100%);
-  color:#11100d;
-  box-shadow:0 16px 40px rgba(201,169,110,.25),inset 0 1px 0 rgba(255,255,255,.42);
+  border-radius:var(--radius-lg);
+  background:linear-gradient(135deg,#ffd6e5 0%,#ff8aae 54%,#c25b84 100%);
+  color:#25101a;
+  box-shadow:0 16px 42px rgba(255,138,174,.3),0 0 26px rgba(255,138,174,.22),inset 0 1px 0 rgba(255,255,255,.52);
   font-weight:800;
 }
 
@@ -60,8 +63,8 @@ input{
 
 .ui-input:focus,
 input:focus{
-  border-color:rgba(201,169,110,.56);
-  box-shadow:0 0 0 4px rgba(201,169,110,.09),inset 0 1px 0 rgba(255,255,255,.12);
+  border-color:rgba(255,138,174,.62);
+  box-shadow:0 0 0 4px rgba(255,138,174,.11),inset 0 1px 0 rgba(255,255,255,.12);
 }
 
 .ui-avatar{
@@ -69,9 +72,9 @@ input:focus{
   place-items:center;
   border-radius:50%;
   object-fit:cover;
-  background:linear-gradient(145deg,rgba(201,169,110,.2),rgba(255,255,255,.06));
-  border:1px solid rgba(201,169,110,.4);
-  color:var(--color-gold);
+  background:linear-gradient(145deg,rgba(255,138,174,.2),rgba(255,255,255,.06));
+  border:1px solid rgba(255,138,174,.46);
+  color:var(--color-rose);
   font-weight:800;
 }
 
@@ -80,5 +83,16 @@ input:focus{
   font-weight:800;
   letter-spacing:.22em;
   text-transform:uppercase;
-  color:var(--color-gold-soft);
+  color:var(--color-gold);
+}
+
+.ui-neon-ring{
+  border:1px solid rgba(255,138,174,.42);
+  box-shadow:0 0 0 1px rgba(255,255,255,.05),0 0 26px rgba(255,138,174,.25),inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+.ui-ticket{
+  border-radius:var(--radius-md);
+  border:1px solid rgba(246,207,139,.22);
+  background:linear-gradient(135deg,rgba(255,138,174,.12),rgba(246,207,139,.07)),rgba(10,11,18,.64);
 }

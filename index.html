@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>Idol 102 Live Prototype</title>
+    <title>OPPAYA Live Prototype</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;500;600&family=Pacifico&family=Playfair+Display:ital@1&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./src/ui/tokens.css" />
@@ -17,7 +17,7 @@
   <body>
     <main class="app-stage" id="appStage">
       <div class="phone-scaler" id="phoneScaler">
-        <article class="phone-device" id="phoneDevice" aria-label="Idol 102">
+        <article class="phone-device" id="phoneDevice" aria-label="OPPAYA">
             <div class="phone-viewport" id="phoneViewport">
               <header class="status-bar" aria-hidden="true">
                 <span>22:14</span>
@@ -25,21 +25,41 @@
               </header>
 
               <div class="screen-stack" id="screenStack">
-                <section id="screen-splash" class="screen active splash-screen screen-hit" data-action="start">
+                <section id="screen-splash" class="screen active splash-screen">
                   <div class="grain"></div>
                   <div class="splash-orb"></div>
+                  <div class="splash-aura aura-one"></div>
+                  <div class="splash-aura aura-two"></div>
+                  <div class="splash-stardust" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                  </div>
                   <div class="splash-copy">
-                    <span>Idol 102</span>
-                    <h1>가까이,<br />지금</h1>
+                    <div class="splash-brand">
+                      <img src="./assets/auth/oppaya-logo.png" alt="" />
+                      <span>OPPAYA</span>
+                    </div>
+                    <h1>CONNECTING<br />BEYOND BOUNDARIES</h1>
                     <p>A different kind of closeness</p>
                   </div>
-                  <button class="tap-button" data-action="start">点击开始</button>
+                  <article class="login-card" aria-label="登录方式">
+                    <button class="login-button google-login" type="button" data-action="start">
+                      <span class="login-icon" aria-hidden="true"><img src="./assets/auth/google.png" alt="" /></span>
+                      <b>Continue with Google</b>
+                    </button>
+                    <button class="login-button apple-login" type="button" data-action="start">
+                      <span class="login-icon" aria-hidden="true"><img src="./assets/auth/apple.png" alt="" /></span>
+                      <b>Continue with Apple</b>
+                    </button>
+                    <button class="login-button email-login" type="button" data-action="start">
+                      <span class="login-icon" aria-hidden="true"><img src="./assets/auth/mail.png" alt="" /></span>
+                      <b>Continue with Email</b>
+                    </button>
+                  </article>
                 </section>
 
                 <section id="screen-select" class="screen select-screen">
                   <header class="select-header">
-                    <span>Stray Kids</span>
-                    <h2>你想开启谁的秘密线？</h2>
+                    <h2>Unlock the story meant only for you.</h2>
                   </header>
                   <div id="memberSlider" class="member-slider"></div>
                   <div class="select-arrows">
@@ -47,7 +67,7 @@
                     <button data-action="next-member">›</button>
                   </div>
                   <div id="memberDots" class="member-dots"></div>
-                  <button class="primary fixed-bottom" data-action="select-member">选择TA</button>
+                  <button class="primary fixed-bottom" data-action="select-member">STEP INTO HIS WORLD</button>
                 </section>
 
                 <section id="screen-dream-intro" class="screen dream-intro-screen">
@@ -59,7 +79,7 @@
                       演出刚结束，走廊里还有未散的灯光和人声。你并不确定自己为什么会在那里，只记得门被推开时，他看见了你。
                     </p>
                   </article>
-                  <button class="tap-button" data-action="enter-dream">继续</button>
+                  <button class="tap-button dream-continue-button" data-action="enter-dream">Continue</button>
                 </section>
 
                 <section id="s-ob" class="screen dream-chat-screen" data-screen="ob">
@@ -118,13 +138,6 @@
                         <h2 id="posterName">Felix</h2>
                         <p id="posterTopDays">相识第 1 天</p>
                       </div>
-                      <div class="home-action-hub">
-                        <button class="discover-button" data-action="toggle-discover" aria-label="发现其他成员">
-                          🌟
-                          <i id="discoverDot" class="notif-dot hidden"></i>
-                        </button>
-                        <button class="notify-button" type="button" data-action="toggle-notifications" aria-label="通知">🔔<i id="notifyDot" class="notif-dot hidden">!</i></button>
-                      </div>
                     </header>
 
                     <button type="button" class="stage-capsule" aria-label="当前关系阶段">
@@ -134,12 +147,6 @@
                     <section id="chronicleTimeline" class="chronicle-timeline" aria-label="时光集"></section>
                   </div>
                   </div>
-
-                  <aside id="discoverDrawer" class="discover-drawer">
-                    <div class="drawer-handle"></div>
-                    <h3>发现其他成员</h3>
-                    <div id="drawerMembers" class="drawer-members"></div>
-                  </aside>
 
                   <div id="memoryOverlay" class="memory-overlay hidden" data-action="close-memory">
                     <article class="memory-polaroid">
@@ -158,7 +165,7 @@
                     <div class="chat-avatar" id="chatAvatar">F</div>
                     <div>
                       <strong id="chatName">Felix</strong>
-                      <span>消息 · 异地模式</span>
+                      <span>Chat · 异地模式</span>
                     </div>
                     <button data-nav="scene">场景</button>
                   </header>
@@ -172,7 +179,6 @@
                 <section id="screen-scene" class="screen scene-list-screen">
                   <header class="plain-header">
                     <div>
-                      <span>Scene</span>
                       <h2>你们可能会去的地方</h2>
                     </div>
                   </header>
@@ -227,6 +233,12 @@
                   </div>
                 </section>
               </div>
+
+              <aside id="discoverDrawer" class="discover-drawer">
+                <div class="drawer-handle"></div>
+                <h3>发现其他成员</h3>
+                <div id="drawerMembers" class="drawer-members"></div>
+              </aside>
 
               <nav class="bottom-nav hidden" id="bottomNav">
                 <button data-nav="home" class="active">Home</button>

@@ -433,11 +433,38 @@ function initMemberSlider() {
 }
 
 function appendBubble(containerId, type, text) {
-  const bubble = document.createElement("div");
-  bubble.className = `bubble ${type}`;
+  const bubble = document.createElement(type === "idol" ? "div" : "div");
+  bubble.className = type === "idol" ? "bubble-row idol-row" : `bubble ${type}`;
+  if (type === "idol") {
+    const avatar = document.createElement("img");
+    avatar.className = "bubble-avatar";
+    avatar.src = state.selected?.image || "";
+    avatar.alt = state.selected?.name || "idol";
+    const content = document.createElement("div");
+    content.className = "bubble idol";
+    content.textContent = text;
+    bubble.append(avatar, content);
+    $(containerId).appendChild(bubble);
+    $(containerId).scrollTop = $(containerId).scrollHeight;
+    return;
+  }
   bubble.textContent = text;
   $(containerId).appendChild(bubble);
   $(containerId).scrollTop = $(containerId).scrollHeight;
+}
+
+function createIdolBubble(text = "") {
+  const row = document.createElement("div");
+  row.className = "bubble-row idol-row";
+  const avatar = document.createElement("img");
+  avatar.className = "bubble-avatar";
+  avatar.src = state.selected?.image || "";
+  avatar.alt = state.selected?.name || "idol";
+  const content = document.createElement("div");
+  content.className = "bubble idol";
+  content.textContent = text;
+  row.append(avatar, content);
+  return row;
 }
 
 const choiceMessagePairs = {
@@ -671,11 +698,12 @@ function playDreamCollapse() {
   typewriterLineWithDuration(errorText, dissolveVoiceover, 2000, () => {
     fadeDreamAmbience(1100);
     setTimeout(() => {
-      pulseDreamGlitchFor(3000, () => {
+      pulseDreamGlitch(3);
+      setTimeout(() => {
         overlay?.classList.remove("typing");
         errorText.textContent = "[ ERROR: STORY DISTURBED - CONNECTION INTERRUPTED ]";
         dreamReloadReady = true;
-      });
+      }, 1460);
     }, 450);
   });
 }
@@ -787,9 +815,7 @@ function playDreamFinale() {
   layoutChoiceChat("dreamMessages", "dreamChoices");
 
   appendTypewriterVoiceover("dreamMessages", knockVoiceover, () => {
-    const typing = document.createElement("div");
-    typing.className = "bubble idol";
-    typing.textContent = "…";
+    const typing = createIdolBubble("…");
     $("dreamMessages").appendChild(typing);
     scrollChatToEnd("dreamMessages");
 
@@ -912,7 +938,7 @@ function showRealInput() {
   $("realChoices").innerHTML = `
     <form id="realForm" class="scene-free-input">
       <input id="realInput" autocomplete="off" placeholder="回应他…" />
-      <button type="submit">发送</button>
+      <button type="submit" aria-label="发送"><span aria-hidden="true"></span></button>
     </form>
   `;
   $("realForm").addEventListener("submit", (event) => {
@@ -939,9 +965,7 @@ async function realReply(text) {
     return;
   }
 
-  const typing = document.createElement("div");
-  typing.className = "bubble idol";
-  typing.textContent = "…";
+  const typing = createIdolBubble("…");
   $("realMessages").appendChild(typing);
   $("realMessages").scrollTop = $("realMessages").scrollHeight;
 
@@ -959,7 +983,7 @@ async function realReply(text) {
     });
     const data = await response.json();
     const reply = data.reply || fallbackSceneReply();
-    typing.textContent = reply;
+    typing.querySelector(".bubble")?.replaceChildren(document.createTextNode(reply));
     state.realHistory.push({ role: "idol", content: reply });
   } catch {
     const reply = fallbackSceneReply();
@@ -1029,8 +1053,20 @@ function startChatIfNeeded() {
 
 function appendChat(type, text) {
   const bubble = document.createElement("div");
-  bubble.className = `bubble ${type === "user" ? "user" : "idol"}`;
-  bubble.textContent = text;
+  if (type === "user") {
+    bubble.className = "bubble user";
+    bubble.textContent = text;
+  } else {
+    bubble.className = "bubble-row idol-row";
+    const avatar = document.createElement("img");
+    avatar.className = "bubble-avatar";
+    avatar.src = state.selected?.image || "";
+    avatar.alt = state.selected?.name || "idol";
+    const content = document.createElement("div");
+    content.className = "bubble idol";
+    content.textContent = text;
+    bubble.append(avatar, content);
+  }
   $("chatMessages").appendChild(bubble);
   $("chatMessages").scrollTop = $("chatMessages").scrollHeight;
 }
@@ -1375,7 +1411,7 @@ function renderNotificationPanel() {
   panel.innerHTML = request
     ? `<button type="button" data-action="approve-friend" data-member-id="${request.id}">${request.name} 通过了你的好友申请。</button>`
     : `<p>暂无通知</p>`;
-  $("screen-home").appendChild(panel);
+  $("phoneViewport").appendChild(panel);
 }
 
 function approveFriend(memberId) {
@@ -1421,6 +1457,7 @@ function approveFriend(memberId) {
   });
   $("notificationPanel")?.remove();
   renderHome();
+  if (state.route === "chat") chatModule.onEnter();
 }
 
 function renderMe() {
@@ -1469,7 +1506,7 @@ document.addEventListener("click", (event) => {
     event.target.classList.add("waiting");
     event.target.disabled = true;
     setTimeout(() => {
-      $("discoverDrawer").classList.remove("open");
+      $("discoverDrawer")?.classList.remove("open");
       updateNavDots();
     }, 500);
   }
@@ -1498,12 +1535,12 @@ document.addEventListener("click", (event) => {
 let lastHomeTap = 0;
 let homeSwipeStartX = null;
 $("screen-home").addEventListener("click", (event) => {
-  if (event.target.closest("button:not(.poster-edge)") || event.target.closest(".discover-drawer") || event.target.closest(".memory-overlay")) return;
+  if (event.target.closest("button:not(.poster-edge)") || event.target.closest(".discover-drawer") || event.target.closest(".notification-panel") || event.target.closest(".memory-overlay")) return;
   const now = Date.now();
   if (now - lastHomeTap < 320) {
     $("posterUi").classList.toggle("hidden");
     $("bottomNav").classList.toggle("peek-hidden");
-    $("discoverDrawer").classList.remove("open");
+    $("discoverDrawer")?.classList.remove("open");
   }
   lastHomeTap = now;
 });

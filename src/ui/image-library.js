@@ -11,11 +11,14 @@ export const remoteSceneImages = {
 };
 
 export const sceneImages = {
-  coffee_shop: remoteSceneImages.coffeeShop,
-  company: "./assets/scenes/company.jpg",
-  convenience_store: "./assets/scenes/convenience.jpg",
-  park: "./assets/scenes/park.jpg",
-  practice_room: "./assets/scenes/practice_room.jpg",
+  city_map: "./assets/scenes/20260526-123724.png",
+  coffee_shop: "./assets/scenes/20260526-123724.png",
+  company: "./assets/scenes/20260526-123724.png",
+  convenience_store: "./assets/scenes/20260526-123724.png",
+  mall: "./assets/scenes/20260526-123724.png",
+  apartment: "./assets/scenes/20260526-123724.png",
+  park: "./assets/scenes/20260526-123724.png",
+  practice_room: "./assets/scenes/20260526-123724.png",
 };
 
 export const characterImages = {
