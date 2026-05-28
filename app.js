@@ -13,7 +13,7 @@ const members = [
     kr: "방찬",
     initial: "BC",
     image: characterImages.bang_chan,
-    hook: "他像是会照顾所有人，可如果有一天他把疲惫只留给你看，那就不一样了。",
+    hook: "He looks after everyone. But if he ever lets you see the tired parts he hides from the world, something has changed.",
   },
   {
     id: "lee_know",
@@ -21,7 +21,7 @@ const members = [
     kr: "리노",
     initial: "LK",
     image: characterImages.lee_know,
-    hook: "他不常说软话，但会用很小的动作证明：他其实一直在意。",
+    hook: "He does not say soft things often, but the smallest gestures make it clear: he has been paying attention.",
   },
   {
     id: "changbin",
@@ -29,7 +29,7 @@ const members = [
     kr: "창빈",
     initial: "CB",
     image: characterImages.changbin,
-    hook: "舞台上攻击性很强，私下却会认真问你有没有吃饭，还记得你上次说过什么。",
+    hook: "Sharp and fearless on stage, but offstage he asks if you have eaten and remembers what you said last time.",
   },
   {
     id: "hyunjin",
@@ -37,7 +37,7 @@ const members = [
     kr: "현진",
     initial: "HJ",
     image: characterImages.hyunjin,
-    hook: "他像一场漂亮又危险的雨，靠近时会让你怀疑自己是不是被特别看见了。",
+    hook: "He feels like beautiful, dangerous rain. Getting close makes you wonder if he is seeing you differently from everyone else.",
   },
   {
     id: "han",
@@ -45,7 +45,7 @@ const members = [
     kr: "한",
     initial: "H",
     image: characterImages.han,
-    hook: "他可以把玩笑说得很快，也可以在突然安静下来时，只把真实留给你。",
+    hook: "He can turn everything into a joke, then go quiet and leave the honest part only with you.",
   },
   {
     id: "felix",
@@ -53,7 +53,7 @@ const members = [
     kr: "필릭스",
     initial: "F",
     image: characterImages.felix,
-    hook: "他的温柔不是营业感，是深夜灯灭以后，还会让人想相信世界没那么坏。",
+    hook: "His kindness does not feel rehearsed. It is the kind that makes the world feel less hard after midnight.",
   },
   {
     id: "seungmin",
@@ -61,7 +61,7 @@ const members = [
     kr: "승민",
     initial: "SM",
     image: characterImages.seungmin,
-    hook: "他嘴上不饶人，但认真起来很稳；越熟，越会把关心藏在一句玩笑里。",
+    hook: "He teases without mercy, but when it matters he is steady. The closer you get, the more care hides inside the joke.",
   },
   {
     id: "in",
@@ -69,7 +69,7 @@ const members = [
     kr: "아이엔",
     initial: "IN",
     image: characterImages.in,
-    hook: "他看起来最年轻，却很清楚自己要什么；一旦信任，就会很直接地站到你这边。",
+    hook: "He may look the youngest, but he knows what he wants. Once he trusts you, he stands on your side without hesitation.",
   },
 ];
 
@@ -107,7 +107,7 @@ const initialState = {
   relationshipPortrait: {
     sharedMemories: [],
     openThreads: [],
-    currentTone: "刚刚认识，真实世界的第一条线",
+    currentTone: "Just met, the first real-world thread",
   },
   realHistory: [],
   dreamBranch: null,
@@ -275,7 +275,9 @@ function shouldStartInAppPreview() {
 function bootstrapAppPreview() {
   const previewMember = members.find((member) => member.id === "bang_chan") || members[0];
   const previewIndex = members.findIndex((member) => member.id === previewMember.id);
-  const previewMessage = "对了，刚刚忘了问你，你叫什么名字啊😊";
+  const previewMessage = "Right, I forgot to ask earlier. What should I call you?";
+  const previewMessageAt = new Date();
+  previewMessageAt.setHours(20, 0, 0, 0);
 
   state.selectedIndex = previewIndex;
   state.selected = previewMember;
@@ -302,7 +304,10 @@ function bootstrapAppPreview() {
         hasNewMsg: true,
         lastMsg: previewMessage,
         previewText: previewMessage,
-        relationshipStage: "Stage 1: 熟悉",
+        lastMessageType: "text",
+        lastMessageAt: previewMessageAt.toISOString(),
+        unreadCount: 1,
+        relationshipStage: "Stage 1: Familiar",
       },
     ],
     addedCharacters: [previewMember],
@@ -317,10 +322,14 @@ function bootstrapAppPreview() {
         image: previewMember.image,
         hasNewMsg: true,
         lastMsg: previewMessage,
+        previewText: previewMessage,
+        lastMessageType: "text",
+        lastMessageAt: previewMessageAt.toISOString(),
+        unreadCount: 1,
       },
     },
     relationshipStages: {
-      [previewMember.id]: "Stage 1: 熟悉",
+      [previewMember.id]: "Stage 1: Familiar",
     },
     unlockedScenes: ["jyp", "rain", "coffee_shop", "park", "convenience_store", "practice_room"],
     unlockedStoryLines: {
@@ -335,7 +344,7 @@ function bootstrapAppPreview() {
       completedFirstScene: true,
     },
     chatStreams: {
-      [previewMember.id]: [{ id: "preview-first-message", role: "idol", text: previewMessage, createdAt: new Date().toISOString() }],
+      [previewMember.id]: [{ id: "preview-first-message", role: "idol", type: "text", text: previewMessage, createdAt: previewMessageAt.toISOString() }],
     },
   });
 }
@@ -484,63 +493,63 @@ function setChoices(containerId, choices) {
 
 const illusionConfig = {
   intro:
-    "耳鸣声还没褪去，万人体育场的欢呼似乎还在墙壁外震动。你推开那扇虚掩的门，他正独自坐在镜子前，舞台装还没换下，汗水顺着脖颈没入领口。",
-  opening: "……你还是找进来了。我就知道，这种地方拦不住你。",
+    "The ringing in your ears has not faded. The roar of the arena still seems to tremble beyond the wall. You push open the half-closed door and find him alone in front of the mirror, still in his stage outfit, sweat slipping down the side of his neck.",
+  opening: "...You found your way in after all. I knew a place like this would never stop you.",
   rounds: [
     {
       choices: [
-        "外面的保安太笨了，我说是你家属就放行了。",
-        "不想在台下看你了，离得太远，看不清你的眼睛。",
-        "(沉默地走过去，把手搭在他的肩膀上)",
+        "Security outside was too easy. I said I was family and they let me in.",
+        "I did not want to watch from the crowd anymore. It was too far away to see your eyes.",
+        "(Walk over silently and place a hand on his shoulder.)",
       ],
       replies: [
-        ["家属？", "(他低头轻笑，玩味着这个词)", "胆子真大……不过，如果是你的话，这个身份我倒是不讨厌。"],
-        ["看不清吗？", "明明刚才在台上，我一眼就看到你在哪了。", "过来，再靠近一点。"],
-        ["(他身体微微僵了一下，随即放松，反手覆在你的手背上)", "这么主动？舞台后的我，可是很危险的。"],
+        ["Family?", "(He lowers his head with a quiet laugh, tasting the word.)", "That is bold... but if it is you, I do not hate the title."],
+        ["You could not see me?", "Funny. From the stage, I found you in the crowd right away.", "Come here. A little closer."],
+        ["(His body stiffens for a second, then relaxes as his hand covers yours.)", "So direct? The version of me after a show can be dangerous."],
       ],
     },
     {
       choices: [
-        "舞台上的你，和现在的你，哪一个是真的？",
-        "再靠近的话，我怕你会听到我的心跳声。",
-        "刚才那首情歌，你是看着我唱的吗？",
+        "Which one is real, the you on stage or the you right now?",
+        "If I come any closer, you might hear my heartbeat.",
+        "Were you looking at me when you sang that love song?",
       ],
       replies: [
-        ["都是我。", "但只有现在的我，是只属于你一个人的。你想看哪一面，我都可以给你。"],
-        ["心跳声？", "那种东西，我刚才在台上就已经跳得快要疯掉了。", "不信的话，你摸摸看？"],
-        ["除了你，我还能看谁呢？", "歌词里写的每一个字，其实都是我想对你说的私心。"],
+        ["They are both me.", "But the me right now is only for you. Whichever side you want to see, I can show you."],
+        ["Your heartbeat?", "Mine was already losing control on stage.", "If you do not believe me, check for yourself."],
+        ["Who else would I look at?", "Every line in those lyrics was something selfish I wanted to say to you."],
       ],
     },
     {
       choices: [
-        "真的什么都可以吗？包括吻你？",
-        "我想让你把这个晚上的时间都给我。",
-        "(拨弄他汗湿的发丝) 我想看你卸下伪装的样子。",
+        "Anything? Even kissing you?",
+        "I want the rest of this night to belong to me.",
+        "(Brush his damp hair back.) I want to see you without the performance.",
       ],
       replies: [
-        ["如果你敢的话。", "不过，我可不保证吻了之后，你还能安全地走出这扇门。"],
-        ["贪心的小猫。", "但我喜欢这种贪心……今晚剩下的时间，本来就没打算留给别人。"],
-        ["(他闭上眼，像是在短暂享受你的触碰)", "只有在你面前，我才不需要任何伪装。现在的我，是不是比镜头前更让你心动？"],
+        ["If you are brave enough.", "But I cannot promise you will walk out of this room safely after that."],
+        ["Greedy.", "But I like that kind of greed... I was not planning to give the rest of tonight to anyone else."],
+        ["(He closes his eyes, briefly letting himself enjoy your touch.)", "With you, I do not need to perform. Is this version of me more dangerous than the one on camera?"],
       ],
     },
     {
       choices: [
-        "(闭上眼，慢慢向他靠近)",
-        "你这种引诱别人的样子，练习过很多次了吗？",
-        "算了，我怕我上瘾。",
+        "(Close your eyes and lean in slowly.)",
+        "Have you practiced looking this tempting?",
+        "Forget it. I am afraid I will get addicted.",
       ],
       replies: [
-        ["(他低头捕捉你的气息，鼻尖轻轻蹭过你的)", "这样就满足了吗？我想要的……可比这多得多。"],
-        ["练习？这种事还需要练习吗？", "看到你的时候，所有的本能都在教我怎么让你留下来。"],
-        ["上瘾也没关系。", "反正，我也已经戒不掉你了。"],
+        ["(He lowers his head until his breath catches yours, his nose brushing lightly against you.)", "Is that enough? What I want is... much more than this."],
+        ["Practice? Do I need practice for this?", "When I see you, every instinct I have tells me how to make you stay."],
+        ["Then get addicted.", "I have already forgotten how to quit you."],
       ],
     },
     {
-      choices: ["那你现在还克制什么？", "如果我不让你走呢？", "(没有说话，只是更近地看着他)"],
+      choices: ["Then what are you still holding back?", "What if I do not let you leave?", "(Say nothing, just look at him from closer.)"],
       replies: [
-        ["既然你提到了……那我就不再克制了。", "(他的手刚要扶住你的后颈)"],
-        ["既然你提到了……那我就不再克制了。", "(他的手刚要扶住你的后颈)"],
-        ["既然你提到了……那我就不再克制了。", "(他的手刚要扶住你的后颈)"],
+        ["Since you said it... I will stop holding back.", "(His hand is just about to settle at the back of your neck.)"],
+        ["Since you said it... I will stop holding back.", "(His hand is just about to settle at the back of your neck.)"],
+        ["Since you said it... I will stop holding back.", "(His hand is just about to settle at the back of your neck.)"],
       ],
       final: true,
     },
@@ -681,7 +690,7 @@ function showDreamErrorOverlay() {
 }
 
 function playDreamCollapse() {
-  const dissolveVoiceover = "他的身影碎裂在眼前，空荡的房间只剩下余温……";
+  const dissolveVoiceover = "His silhouette breaks apart in front of you. The empty room keeps only the last trace of warmth...";
   const screen = $("s-ob");
   const overlay = $("dreamErrorOverlay");
   const errorText = overlay?.querySelector(".dream-error-text");
@@ -726,10 +735,10 @@ function onDreamReload() {
 }
 
 const transitionLines = [
-  "隐约间，",
-  "现实世界的某种声音由远及近，",
-  "刚才的一切，",
-  "就像是一场梦一样……",
+  "Somewhere far away,",
+  "a sound from the real world comes closer,",
+  "and everything that just happened",
+  "begins to feel like a dream...",
 ];
 
 function typewriterLine(el, text, done) {
@@ -808,8 +817,8 @@ function enterRealityWithWhiteFlash() {
 
 function playDreamFinale() {
   const idolName = state.selected.name;
-  const knockVoiceover = `（突然，门外响起了工作人员急促的敲门声：“${idolName}！舞台倒计时了，造型师在到处找你，快出来！”）`;
-  const idolFarewellLines = ["啧，真是煞风景……", "在这等我", "哪也不许去，知道吗？"];
+  const knockVoiceover = `(Suddenly, a staff member knocks urgently outside the door. "${idolName}! Stage countdown has started. The stylist is looking everywhere for you. Come out!")`;
+  const idolFarewellLines = ["Tch. Perfect timing...", "Wait here for me.", "Do not go anywhere, okay?"];
 
   $("dreamChoices").innerHTML = "";
   layoutChoiceChat("dreamMessages", "dreamChoices");
@@ -831,9 +840,9 @@ function playDreamFinale() {
       setTimeout(() => {
         setChoices("dreamChoices", [
           {
-            label: "好，我在这里等你回来。",
+            label: "Okay. I will wait here for you.",
             run: () => {
-              appendBubble("dreamMessages", "user", "好，我在这里等你回来。");
+              appendBubble("dreamMessages", "user", "Okay. I will wait here for you.");
               setTimeout(() => playDreamCollapse(), 520);
             },
           },
@@ -913,17 +922,17 @@ function realOpening(branch) {
   state.realBranch = branch;
   $("realChoices").innerHTML = "";
   const userSetup = {
-    coffee: "公司楼下的咖啡厅人很多。你低头看订单时，才发现手里的冰美式好像不是你的。",
-    rain: "雨突然砸下来。你没带伞，只能站在公司屋檐下等它小一点。",
-    bookstore: "街角书店很安静。你伸手去拿最后一本书时，另一只手也刚好碰到书脊。",
+    coffee: "The cafe downstairs near the company is packed. When you look down at the order label, you realize the iced Americano in your hand may not be yours.",
+    rain: "Rain suddenly comes pouring down. You have no umbrella, so you can only wait under the company awning for it to ease.",
+    bookstore: "The corner bookstore is quiet. As you reach for the last copy of a book, another hand touches the spine at the same time.",
   }[branch];
   appendBubble("realMessages", "system", userSetup);
   $("realSceneSub").textContent =
-    branch === "coffee" ? "同款咖啡" : branch === "rain" ? "突降暴雨" : "街角书店";
+    branch === "coffee" ? "Same Coffee" : branch === "rain" ? "Sudden Rain" : "Corner Bookstore";
   const idolLines = {
-    coffee: ["那个……不好意思，你手里那杯好像是我的？我点的是加浓缩的……"],
-    rain: ["雨下得很大呢。如果不介意的话，要一起打伞走到地铁站吗？"],
-    bookstore: ["你也喜欢这位作家的书吗？很少见到能在这里遇到同好。"],
+    coffee: ["Um... sorry, I think the cup in your hand might be mine? I ordered the one with an extra shot..."],
+    rain: ["The rain is really heavy. If you do not mind, do you want to share the umbrella to the subway station?"],
+    bookstore: ["You like this author too? I almost never meet someone here with the same taste."],
   }[branch];
   idolLines.forEach((line, index) => {
     setTimeout(() => {
@@ -937,8 +946,8 @@ function realOpening(branch) {
 function showRealInput() {
   $("realChoices").innerHTML = `
     <form id="realForm" class="scene-free-input">
-      <input id="realInput" autocomplete="off" placeholder="回应他…" />
-      <button type="submit" aria-label="发送"><span aria-hidden="true"></span></button>
+      <input id="realInput" autocomplete="off" placeholder="Reply to him..." />
+      <button type="submit" aria-label="Send"><span aria-hidden="true"></span></button>
     </form>
   `;
   $("realForm").addEventListener("submit", (event) => {
@@ -994,25 +1003,25 @@ async function realReply(text) {
 
 function fallbackSceneReply() {
   if (state.realBranch === "coffee") {
-    if (state.realTurn === 1) return "嘘——没关系的，不用道歉。不过这杯咖啡现在可能太苦了。你不介意的话，我重新请你喝一杯？";
-    return "他看了一眼你手里的杯子，笑得很轻。下次我会看清楚名字再拿。";
+    if (state.realTurn === 1) return "Shh, it is okay. You do not need to apologize. This coffee might be too bitter now, though. If you do not mind, can I buy you a new one?";
+    return "He glances at the cup in your hand and gives a small laugh. Next time, I will read the name before I take it.";
   }
   if (state.realBranch === "rain") {
-    if (state.realTurn === 1) return "不麻烦，顺路而已。而且，让你在雨里等这么久，也不太合适。";
-    return "他把伞往你这边偏了一点。走慢一点，地上有点滑。";
+    if (state.realTurn === 1) return "It is no trouble. It is on my way anyway. Besides, leaving you waiting in the rain for this long would not feel right.";
+    return "He tilts the umbrella a little more toward you. Walk slowly. The ground is slippery.";
   }
-  if (state.realTurn === 1) return "他有些惊喜地挑了挑眉。看来我们不仅品味一致，你还很细心。既然只有一本了，那就先让给你吧。";
-  return "他把那本书往你这边推了推。你先拿吧，我看书很快的。";
+  if (state.realTurn === 1) return "He lifts his brows, a little surprised. Looks like we not only have the same taste, you are thoughtful too. Since there is only one copy, you should take it first.";
+  return "He nudges the book toward you. You take it first. I read pretty quickly.";
 }
 
 function forceRealityEnding() {
   const closingLine = {
-    coffee: "真的好幸运今天能遇见你。我们能加个联系方式吗？也许下次可以一起喝不苦的咖啡。",
-    rain: "真的好幸运今天能遇见你。我们能加个联系方式吗？等雨小一点，我想确认你到家了。",
-    bookstore: "真的好幸运今天能遇见你。我们能加个联系方式吗？那本书看完以后，也许可以告诉我你最喜欢哪一页。",
+    coffee: "I am really glad I ran into you today. Could we add each other? Maybe next time we can drink coffee that is not this bitter.",
+    rain: "I am really glad I ran into you today. Could we add each other? When the rain eases, I want to make sure you get home safely.",
+    bookstore: "I am really glad I ran into you today. Could we add each other? After you finish that book, maybe you can tell me which page you liked most.",
   }[state.realBranch];
-  appendBubble("realMessages", "idol", "啊，助理在催我了。我得赶紧上去继续练习，今天的休息时间结束了。");
-  setTimeout(() => appendBubble("realMessages", "idol", "不过……"), 700);
+  appendBubble("realMessages", "idol", "Ah, my assistant is calling me. I have to hurry upstairs and get back to practice. My break is over.");
+  setTimeout(() => appendBubble("realMessages", "idol", "But..."), 700);
   setTimeout(() => appendBubble("realMessages", "idol", closingLine), 1400);
   setTimeout(() => askContact(), 2300);
 }
@@ -1020,11 +1029,11 @@ function forceRealityEnding() {
 function askContact() {
   setChoices("realChoices", [
     {
-      label: "好。",
+      label: "Okay.",
       run: () => {
         $("realChoices").innerHTML = "";
-        appendBubble("realMessages", "user", "好。");
-        appendBubble("realMessages", "system", `你已经添加了 ${state.selected.name}。`);
+        appendBubble("realMessages", "user", "Okay.");
+        appendBubble("realMessages", "system", `You have added ${state.selected.name}.`);
         state.chatUnread = true;
         state.relationshipPortrait.sharedMemories.push(buildFirstMemoryText());
         patchProgress({ completedFirstScene: true, stage: "chat" });
@@ -1033,7 +1042,7 @@ function askContact() {
           unlockedScenes: [...new Set([...state.unlockedScenes, state.realBranch || "jyp"])],
         });
         setTimeout(() => {
-          showToast(`已添加 ${state.selected.name}`);
+          showToast(`Added ${state.selected.name}`);
           show("chat");
         }, 1400);
       },
@@ -1048,7 +1057,7 @@ function startChatIfNeeded() {
   state.chatStarted = true;
   setAppState({ chatStarted: true, chatUnread: false });
   $("chatMessages").innerHTML = "";
-  setTimeout(() => appendChat("idol", "对了，刚刚忘了问你叫什么了。"), 500);
+  setTimeout(() => appendChat("idol", "Right, I forgot to ask earlier. What should I call you?"), 500);
 }
 
 function appendChat(type, text) {
@@ -1080,7 +1089,7 @@ async function sendChatMessage(message) {
 
   const lower = message.trim();
   if (!state.userPortrait.basic.preferredName && lower.length <= 16) {
-    state.userPortrait.basic.preferredName = lower.replace(/^我叫/, "").replace(/^叫我/, "").trim() || lower;
+    state.userPortrait.basic.preferredName = lower.replace(/^my name is\s+/i, "").replace(/^call me\s+/i, "").trim() || lower;
     renderMe();
   }
 
@@ -1122,9 +1131,9 @@ async function sendChatMessage(message) {
 
 function fallbackReply(message) {
   const name = state.userPortrait.basic.preferredName;
-  if (!name) return "好，我记住了。那我以后就这样叫你。";
-  if (message.includes("累")) return `${name}，那今天先别硬撑了。我还在练习室，可能回得慢一点，但我会看消息。`;
-  return "嗯，我在。刚才上楼以后还在想，公司楼下那会儿是不是有点突然。";
+  if (!name) return "Okay, I will remember that. I will call you that from now on.";
+  if (/\btired\b|exhausted|worn out|rough day/i.test(message)) return `${name}, do not push yourself too hard today. I am still in the practice room, so I may reply slowly, but I will check my messages.`;
+  return "Yeah, I am here. After I went upstairs, I kept thinking about how sudden that moment outside the company must have felt.";
 }
 
 function renderHome() {
@@ -1135,9 +1144,8 @@ function renderHome() {
   $("homePoster").classList.toggle("alt", state.posterAlt);
   renderMemorySlots();
   const name = state.userPortrait.basic.preferredName;
-  $("posterTopDays").textContent = name ? `相识第 1 天 · 记得 ${name}` : "相识第 1 天";
-  $("posterStage").textContent = "Stage 1: 熟悉";
-  renderDrawerMembers();
+  $("posterTopDays").textContent = name ? `Day 1 since you met · Remembers ${name}` : "Day 1 since you met";
+  $("posterStage").textContent = "Stage 1: Familiar";
   updateNavDots();
 }
 
@@ -1153,8 +1161,8 @@ function renderMemorySlots() {
           <article class="chronicle-node ${memory.fresh ? "revealed" : ""}" style="--tilt:${index % 2 === 0 ? "-2.2deg" : "1.8deg"}">
             <button type="button" class="chronicle-polaroid" data-action="open-memory" data-memory-id="${memory.memoryId}">
               <span class="chronicle-photo" style="background-image:url('${memory.imageUrl}')"></span>
-              <em>📍 ${memory.location || "未命名"}</em>
-              <b>第 ${memory.dayCount || 1} 天</b>
+              <em>${memory.location || "Untitled"}</em>
+              <b>Day ${memory.dayCount || 1}</b>
             </button>
             <i class="chronicle-line"></i>
             <strong class="chronicle-date">${memory.displayDate || "2026.05.18"}</strong>
@@ -1162,9 +1170,9 @@ function renderMemorySlots() {
         `
         : `
           <article class="chronicle-node chronicle-empty" style="--tilt:${index % 2 === 0 ? "-1.6deg" : "1.4deg"}">
-            <button type="button" class="chronicle-polaroid empty-polaroid" aria-label="故事还没发生">
+            <button type="button" class="chronicle-polaroid empty-polaroid" aria-label="No memory yet">
               <span class="chronicle-photo" aria-hidden="true">?</span>
-              <em>故事还没发生</em>
+              <em>No memory yet</em>
               <b>---</b>
             </button>
             <i class="chronicle-line"></i>
@@ -1186,12 +1194,12 @@ function getMemoryTimeline() {
     memoryId: "jyp-first-meet",
     characterId: state.selected.id,
     placeId: "company",
-    title: "JYP 楼下",
+    title: "Outside JYP",
     imageUrl: "https://i.pinimg.com/1200x/78/dd/ea/78ddead38013270722a9fbc132f490e0.jpg",
     initialImageUrl: "https://i.pinimg.com/1200x/78/dd/ea/78ddead38013270722a9fbc132f490e0.jpg",
     displayDate: "2026.05.18",
     dayCount: 1,
-    location: "JYP 楼下",
+    location: "Outside JYP",
     content: buildFirstMemoryText(),
     chatHistorySnap: [],
     code: "CODE-00",
@@ -1241,15 +1249,15 @@ function renderMemoryDetail(memory, editing = false) {
       ${
         editing
           ? `<div class="memory-image-tools">
-              <button type="button" data-action="memory-camera">拍照</button>
-              <button type="button" data-action="memory-upload">从相册上传</button>
-              <button type="button" data-action="memory-reset-image">恢复默认图像</button>
+              <button type="button" data-action="memory-camera">Take Photo</button>
+              <button type="button" data-action="memory-upload">Upload from Album</button>
+              <button type="button" data-action="memory-reset-image">Restore Default Image</button>
               <input id="memoryImageInput" type="file" accept="image/*" capture="environment" hidden />
             </div>
-            <button type="button" class="memory-primary" data-action="save-memory-edit">保存编辑</button>`
+            <button type="button" class="memory-primary" data-action="save-memory-edit">Save Changes</button>`
           : `<div class="memory-actions">
-              <button type="button" data-action="memory-retrograde">⏳ 时光回溯</button>
-              <button type="button" data-action="edit-memory">✏️ 编辑记忆</button>
+              <button type="button" data-action="memory-retrograde">Memory Replay</button>
+              <button type="button" data-action="edit-memory">Edit Memory</button>
             </div>`
       }
     </article>
@@ -1318,12 +1326,12 @@ function renderRetrogradeReview(memory) {
   view.style.setProperty("--review-bg", `url('${memory.imageUrl}')`);
   view.innerHTML = `
     <header class="retrograde-header">
-      <button type="button" data-action="exit-retrograde">‹ 退出回顾</button>
-      <span>📍 城市坐标 · ${escapeHtml(memory.location)}</span>
+      <button type="button" data-action="exit-retrograde">‹ Exit Replay</button>
+      <span>City Marker · ${escapeHtml(memory.location)}</span>
     </header>
     <p class="retrograde-voiceover">${escapeHtml(memory.content)}</p>
     <div class="retrograde-messages">
-      ${memory.chatHistorySnap.length ? memory.chatHistorySnap.map(renderRetrogradeBubble).join("") : `<div class="bubble system">这段记忆没有可回溯的聊天快照。</div>`}
+      ${memory.chatHistorySnap.length ? memory.chatHistorySnap.map(renderRetrogradeBubble).join("") : `<div class="bubble system">No chat snapshot was saved for this memory.</div>`}
     </div>
   `;
   $("screen-home").appendChild(view);
@@ -1365,53 +1373,15 @@ function escapeAttr(value) {
 
 function buildFirstMemoryText() {
   const memory = {
-    coffee: "那天在 JYP 楼下的咖啡厅，人群挤在取餐台前。你们不小心拿错了冰美式，他压低声音提醒你，又在被助理催走前主动加了你的聊天方式。",
-    rain: "那天在 JYP 楼下，雨突然变得很大。他练习结束后撑着一把透明伞，从屋檐下看见你，问你要不要一起走到地铁站。",
-    bookstore: "那天在 JYP 附近的街角书店，你们同时伸手去拿最后一本书。他像遇到同好一样笑了一下，临走前主动留下了联系方式。",
+    coffee: "That day at the cafe outside JYP, people crowded around the pickup counter. You accidentally took the same iced Americano. He lowered his voice to point it out, then asked to add you before his assistant hurried him away.",
+    rain: "That day outside JYP, the rain suddenly came down hard. After practice, he stepped out with a clear umbrella, noticed you under the awning, and asked if you wanted to walk to the subway together.",
+    bookstore: "That day at the corner bookstore near JYP, you both reached for the last copy of the same book. He smiled like he had found someone with the same taste, then left his contact before he went.",
   }[state.realBranch];
-  return memory || "那天在 JYP 楼下，你们第一次真正说上话。他主动添加了你的聊天方式。";
+  return memory || "That day outside JYP, you truly spoke for the first time. He was the one who asked to add you.";
 }
 
 function updateNavDots() {
   $("chatDot")?.classList.toggle("hidden", !state.chatUnread);
-  $("notifyDot")?.classList.toggle("hidden", !state.hasNotification);
-}
-
-function renderDrawerMembers() {
-  const drawer = $("drawerMembers");
-  if (!drawer) return;
-  const pendingIds = new Set(state.pendingFriendRequests.map((request) => request.id));
-  drawer.innerHTML = state.unaddedCharacters
-    .map(
-      (member) => `
-        <div class="drawer-member">
-          <img src="${member.image}" alt="${member.name}" />
-          <div>
-            <strong>${member.name}</strong>
-            <button data-action="request-member" data-member-id="${member.id}" class="${pendingIds.has(member.id) ? "waiting" : ""}" ${pendingIds.has(member.id) ? "disabled" : ""}>
-              ${pendingIds.has(member.id) ? "等待中..." : "添加"}
-            </button>
-          </div>
-        </div>
-      `,
-    )
-    .join("");
-}
-
-function renderNotificationPanel() {
-  const existing = $("notificationPanel");
-  if (existing) {
-    existing.remove();
-    return;
-  }
-  const request = state.pendingFriendRequests[0];
-  const panel = document.createElement("aside");
-  panel.id = "notificationPanel";
-  panel.className = "notification-panel";
-  panel.innerHTML = request
-    ? `<button type="button" data-action="approve-friend" data-member-id="${request.id}">${request.name} 通过了你的好友申请。</button>`
-    : `<p>暂无通知</p>`;
-  $("phoneViewport").appendChild(panel);
 }
 
 function approveFriend(memberId) {
@@ -1492,8 +1462,6 @@ document.addEventListener("click", (event) => {
   if (action === "enter-real") {
     enterRealityWithWhiteFlash();
   }
-  if (action === "toggle-discover") $("discoverDrawer").classList.toggle("open");
-  if (action === "toggle-notifications") renderNotificationPanel();
   if (action === "request-member") {
     const memberId = event.target.dataset.memberId;
     const member = state.unaddedCharacters.find((item) => item.id === memberId);
@@ -1502,11 +1470,10 @@ document.addEventListener("click", (event) => {
       pendingFriendRequests: [...state.pendingFriendRequests, member],
       hasNotification: true,
     });
-    event.target.textContent = "等待中...";
+    event.target.textContent = "Pending...";
     event.target.classList.add("waiting");
     event.target.disabled = true;
     setTimeout(() => {
-      $("discoverDrawer")?.classList.remove("open");
       updateNavDots();
     }, 500);
   }
@@ -1535,12 +1502,11 @@ document.addEventListener("click", (event) => {
 let lastHomeTap = 0;
 let homeSwipeStartX = null;
 $("screen-home").addEventListener("click", (event) => {
-  if (event.target.closest("button:not(.poster-edge)") || event.target.closest(".discover-drawer") || event.target.closest(".notification-panel") || event.target.closest(".memory-overlay")) return;
+  if (event.target.closest("button:not(.poster-edge)") || event.target.closest(".notification-panel") || event.target.closest(".memory-overlay")) return;
   const now = Date.now();
   if (now - lastHomeTap < 320) {
     $("posterUi").classList.toggle("hidden");
     $("bottomNav").classList.toggle("peek-hidden");
-    $("discoverDrawer")?.classList.remove("open");
   }
   lastHomeTap = now;
 });

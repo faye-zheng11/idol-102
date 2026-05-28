@@ -1,10 +1,10 @@
-// 文案库：集中沉淀界面固定文案，业务剧情文案仍保留在对应模块。
+// Shared UI copy. Story copy stays inside the feature modules.
 export const uiCopy = {
   appName: "Idol 102",
   splash: {
     title: "가까이,\n지금",
     subtitle: "A different kind of closeness",
-    cta: "点击开始",
+    cta: "Tap to Start",
   },
   tabs: {
     home: "Home",
@@ -13,16 +13,16 @@ export const uiCopy = {
     me: "Me",
   },
   home: {
-    dayOne: "相识第 1 天",
-    defaultStage: "Stage 1: 熟悉",
-    discoverTitle: "发现其他成员",
-    emptyMemory: "故事还没发生",
+    dayOne: "Day 1 since you met",
+    defaultStage: "Stage 1: Familiar",
+    discoverTitle: "Discover Members",
+    emptyMemory: "No memory yet",
   },
   chat: {
     title: "Chat",
-    empty: "还没有新的联系人。",
-    remoteMode: "Chat · 异地模式",
-    inputPlaceholder: "发消息…",
+    empty: "No contacts yet.",
+    remoteMode: "Chat · Long-distance mode",
+    inputPlaceholder: "Message...",
   },
   scene: {
     title: "SCENE",

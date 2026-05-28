@@ -1,33 +1,33 @@
 export const RealMeetScenes = {
   rain: {
     id: "rain",
-    title: "暴雨与伞",
-    userChoiceText: "突降暴雨，你在JYP楼下躲雨，他撑伞走过来...",
+    title: "Rain and the Umbrella",
+    userChoiceText: "A sudden downpour traps you outside JYP. He walks over with an umbrella...",
     systemPrompt:
-      "场景：首尔突降暴雨。用户正在JYP公司大楼檐下躲雨。AI（你）正准备离开公司，撑开了一把透明伞，看到用户没带伞在避雨。由于你性格善良体贴，你礼貌、克制地走过去，保持着偶像与陌生人之间的社交距离，问用户要不要这把伞。记住：你不认识用户，这是你们现实中的第一次见面。",
-    aiFirstLine: "那个……雨下得挺大的，你要是不介意的话，这把伞给你吧？我坐保姆车回去就行。",
+      "Scene: A sudden downpour in Seoul. The user is sheltering under the awning outside the JYP building. You are about to leave the company with a clear umbrella. You notice the user has no umbrella. You are kind and considerate, so you approach politely and with restraint, keeping the social distance of an idol speaking to a stranger, and ask whether they need the umbrella. Remember: you do not know the user. This is your first real-world meeting.",
+    aiFirstLine: "Um... the rain is pretty heavy. If you do not mind, you can take this umbrella. I am getting picked up anyway.",
   },
   coffee: {
     id: "coffee",
-    title: "同款冰美式",
-    userChoiceText: "咖啡店人很多，他行色匆匆，不小心拿错了你的咖啡...",
+    title: "Same Iced Americano",
+    userChoiceText: "The cafe is crowded. In a rush, he accidentally takes your coffee...",
     systemPrompt:
-      "场景：JYP公司附近极其拥挤的咖啡厅。AI（你）戴着帽子口罩低头点了一杯冰美式，因为赶时间通告，行色匆匆地从柜台抓起一杯咖啡就走。结果那是用户先点的同款咖啡。用户叫住了你。你摘下一点口罩，显得有些局促和抱歉。记住：你是一个很有礼貌的顶级偶像，对陌生人保持克制与距离感。",
+      "Scene: A very crowded cafe near the JYP building. You are wearing a cap and mask. You order an iced Americano while checking your phone because you are late for a schedule. In a rush, you grab a cup from the counter and start to leave, but it is the user's same drink. The user stops you. You lower your mask slightly and look embarrassed and apologetic. Remember: you are a very polite top idol, restrained and respectful with strangers.",
     aiFirstLine:
-      "啊！真的很抱歉！我刚刚太着急看经纪人的信息了……没注意到名字。这杯我还没喝，真的很对不起，我帮您重新去排队买一杯吧？",
+      "Oh--I am really sorry. I was checking my manager's message and did not notice the name. I have not drunk from it. Let me line up and buy you a new one.",
   },
   bump: {
     id: "bump",
-    title: "转角的碰撞",
-    userChoiceText: "他在街角因为避让旁人，不小心迎面撞到了你...",
+    title: "The Corner Collision",
+    userChoiceText: "At the corner, he dodges someone and accidentally bumps into you...",
     systemPrompt:
-      "场景：JYP公司大楼转角街区。AI（你）正低头快步走路，突然旁边有滑板车冲过，你为了避让旁人，猛地往旁边一躲，结果不小心迎面撞到了刚好路过的用户。用户的随身物品（或包包）掉落了一地。你立刻蹲下去帮她捡，充满愧疚。记住：你完全不认识用户，保持真实爱豆的社交礼貌。",
-    aiFirstLine: "哇啊！小心！……真的很对不起！你没事吧？有没有伤到哪里？怪我走得太急了，我帮您把东西捡起来！",
+      "Scene: A street corner near the JYP building. You are walking quickly with your head down when a scooter suddenly passes nearby. You dodge to avoid someone and accidentally bump straight into the user, who happens to be walking past. The user's belongings fall to the ground. You immediately crouch to help pick them up and feel guilty. Remember: you do not know the user at all. Keep the realistic social politeness of an idol.",
+    aiFirstLine: "Whoa--careful! I am so sorry. Are you okay? Did I hurt you anywhere? That was my fault, I was walking too fast. Let me help you pick these up.",
   },
 };
 
 const FORCE_CONTACT_INSTRUCTION =
-  "*[SYSTEM FORCE]*: 无论用户刚才说了什么，你现在必须找一个‘赶通告/经纪人催促/有事要先走’的自然借口切断话题。并且，你要主动向用户提出‘不如加个联系方式/联系软件好友吧’。请用一句符合你人设的委婉、自然的话表达出来，不要生硬。";
+  "*[SYSTEM FORCE]*: No matter what the user just said, you must naturally wrap up the conversation because you have a schedule, your manager is rushing you, or you have to leave. You must also gently suggest exchanging contacts or adding each other in the messaging app. Express this in one natural, character-consistent line. Do not make it abrupt.";
 
 export function createRealMeetModule(deps = {}) {
   let activeScene = null;
@@ -44,7 +44,7 @@ export function createRealMeetModule(deps = {}) {
   const getState = deps.getState || (() => ({}));
 
   function start({ idol } = {}) {
-    activeIdol = idol || deps.idol || { id: "unknown", name: "他", initial: "?" };
+    activeIdol = idol || deps.idol || { id: "unknown", name: "Him", initial: "?" };
     activeScene = null;
     chatRoundCounter = 0;
     history = [];
@@ -52,7 +52,7 @@ export function createRealMeetModule(deps = {}) {
     getElement("realMessages").innerHTML = "";
     getElement("realChoices").innerHTML = "";
     getElement("realSceneSub").textContent = "";
-    appendBubble("realMessages", "system", "JYP 公司楼下，人声、雨声、车灯和玻璃门里的练习室灯光混在一起。");
+    appendBubble("realMessages", "system", "Outside JYP, voices, rain, car lights, and the glow from practice rooms blur together behind the glass doors.");
     renderSceneChoices();
   }
 
@@ -86,8 +86,8 @@ export function createRealMeetModule(deps = {}) {
   function renderInput({ disabled = false } = {}) {
     getElement("realChoices").innerHTML = `
       <form id="realForm" class="scene-free-input">
-        <input id="realInput" autocomplete="off" placeholder="回应他…" ${disabled ? "disabled" : ""} />
-        <button type="submit" aria-label="发送" ${disabled ? "disabled" : ""}><span aria-hidden="true"></span></button>
+        <input id="realInput" autocomplete="off" placeholder="Reply to him..." ${disabled ? "disabled" : ""} />
+        <button type="submit" aria-label="Send" ${disabled ? "disabled" : ""}><span aria-hidden="true"></span></button>
       </form>
     `;
     getElement("realForm").addEventListener("submit", (event) => {
@@ -154,7 +154,7 @@ export function createRealMeetModule(deps = {}) {
     const choices = getElement("realChoices");
     choices.insertAdjacentHTML(
       "afterbegin",
-      `<button type="button" class="contact-confirm-choice" data-real-confirm-contact>好的</button>`,
+      `<button type="button" class="contact-confirm-choice" data-real-confirm-contact>Okay</button>`,
     );
     choices.querySelector("[data-real-confirm-contact]").addEventListener("click", confirmContact);
     layoutChoiceChat("realMessages", "realChoices");
@@ -165,12 +165,16 @@ export function createRealMeetModule(deps = {}) {
       id: activeIdol.id,
       name: activeIdol.name,
       initial: activeIdol.initial,
+      image: activeIdol.image,
       unread: true,
       hasNewMsg: true,
-      lastMsg: "对了，刚刚忘了问你，你叫什么名字了。",
-      previewText: "对了，刚刚忘了问你，你叫什么名字啊😊",
+      lastMsg: "Right, I forgot to ask earlier. What should I call you?",
+      previewText: "Right, I forgot to ask earlier. What should I call you?",
+      lastMessageType: "text",
+      lastMessageAt: new Date().toISOString(),
+      unreadCount: 1,
       firstSceneId: activeScene.id,
-      relationshipStage: "Stage 1: 熟悉",
+      relationshipStage: "Stage 1: Familiar",
     };
     const current = getState();
     const officialFriends = (current.officialFriends || []).filter((item) => item.id !== friend.id);
@@ -205,35 +209,35 @@ export function createRealMeetModule(deps = {}) {
       },
     });
 
-    appendBubble("realMessages", "system", `你已添加 ${activeIdol.name} 为好友。`);
-    showToast(`你已添加 ${activeIdol.name} 为好友`);
+    appendBubble("realMessages", "system", `${activeIdol.name} has been added to your contacts.`);
+    showToast(`${activeIdol.name} has been added to your contacts`);
     setTimeout(() => navigate("chat"), 850);
   }
 
   function fallbackSceneReply(forceInstruction, message = "") {
     if (forceInstruction) {
-      return "啊，经纪人在催我了，我得先走了。刚刚真的谢谢你……如果你不介意的话，我们可以加个联系方式吗？";
+      return "Ah, my manager is calling me. I should go. Thank you for just now... if you do not mind, could we add each other?";
     }
     const text = message.trim();
-    const isRefusal = /不用|没事|没关系|不麻烦|算了|不用了|没事的/.test(text);
-    const isConcern = /没喝|口罩|赶时间|通告|经纪人|忙/.test(text);
+    const isRefusal = /\b(no need|it's okay|its okay|don't worry|dont worry|never mind|no thanks|all good)\b/i.test(text);
+    const isConcern = /\b(did not drink|haven't drunk|mask|rush|schedule|manager|busy)\b/i.test(text);
 
     if (activeScene?.id === "rain") {
-      if (isRefusal) return "那我就不勉强你了。不过雨真的很大，你至少站到里面一点，别被风吹到。";
-      if (chatRoundCounter === 1) return "不用担心我，我等下直接上车。你一个人在这里淋着，反而比较让我过意不去。";
-      return "如果你不方便拿我的伞，我可以请工作人员帮你叫辆车。这样会不会好一点？";
+      if (isRefusal) return "I will not push you, then. But the rain is really heavy, so at least stand a little farther inside, away from the wind.";
+      if (chatRoundCounter === 1) return "Do not worry about me. I am getting straight into the car soon. Seeing you stuck here alone makes me feel worse.";
+      return "If taking my umbrella feels inconvenient, I can ask staff to call you a car. Would that be better?";
     }
 
     if (activeScene?.id === "coffee") {
-      if (isRefusal) return "真的不用我重新买吗？那至少让我确认一下这杯是不是你的名字，我不想让你吃亏。";
-      if (isConcern) return "嗯，我确实有点赶，但这不是可以拿错别人东西的理由。你别有压力，我处理完再走。";
-      if (chatRoundCounter === 1) return "谢谢你这么说，但我还是觉得很抱歉。这里人太多了，我们要不要先站到旁边一点？";
-      return "我明白你的意思了。那我把这杯放回去，再跟店员说明一下，尽量不耽误你。";
+      if (isRefusal) return "Are you sure I should not buy you a new one? At least let me check whether this has your name. I do not want you to lose out because of me.";
+      if (isConcern) return "I am in a rush, yes, but that is not an excuse to take someone else's drink. Please do not feel pressured. I will fix it before I leave.";
+      if (chatRoundCounter === 1) return "Thank you for saying that, but I still feel bad. It is crowded here. Should we step aside for a second?";
+      return "I understand. I will put this back and explain it to the staff so I do not hold you up.";
     }
 
-    if (isRefusal) return "你这么说我更不好意思了。至少让我帮你把东西都捡起来，再确认一下有没有摔坏。";
-    if (chatRoundCounter === 1) return "谢谢你没有生气。我刚刚真的吓到了，你手腕或者肩膀有没有撞疼？";
-    return "我走路太急了，是我的问题。你先别急，我会负责把这里整理好。";
+    if (isRefusal) return "That makes me feel even worse. At least let me help pick everything up and check that nothing broke.";
+    if (chatRoundCounter === 1) return "Thank you for not getting angry. That really scared me. Did your wrist or shoulder get hit?";
+    return "I was walking too fast, so this is on me. Take your time. I will help clean this up.";
   }
 
   return {

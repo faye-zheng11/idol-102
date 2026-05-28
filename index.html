@@ -41,7 +41,7 @@
                     <h1>CONNECTING<br />BEYOND BOUNDARIES</h1>
                     <p>A different kind of closeness</p>
                   </div>
-                  <article class="login-card" aria-label="登录方式">
+                  <article class="login-card" aria-label="Sign-in options">
                     <button class="login-button google-login" type="button" data-action="start">
                       <span class="login-icon" aria-hidden="true"><img src="./assets/auth/google.png" alt="" /></span>
                       <b>Continue with Google</b>
@@ -74,9 +74,9 @@
                   <div class="dream-bg"></div>
                   <div class="dream-veil"></div>
                   <article class="dream-narration">
-                    <span>演唱会后台</span>
+                    <span>After the concert</span>
                     <p>
-                      演出刚结束，走廊里还有未散的灯光和人声。你并不确定自己为什么会在那里，只记得门被推开时，他看见了你。
+                      The show has just ended. The hallway still holds the heat of the lights and the fading roar of the crowd. You are not sure why you are here, only that the door opens and he sees you.
                     </p>
                   </article>
                   <button class="tap-button dream-continue-button" data-action="enter-dream">Continue</button>
@@ -93,7 +93,7 @@
                   <div id="dreamChoices" class="choice-stack"></div>
                   <div id="dreamErrorOverlay" class="dream-error-overlay hidden">
                     <p class="dream-error-text">[ ERROR: STORY DISTURBED - CONNECTION INTERRUPTED ]</p>
-                    <button type="button" class="dream-reload-btn" data-action="dream-reload">[ 重新加载 ]</button>
+                    <button type="button" class="dream-reload-btn" data-action="dream-reload">[ Reload ]</button>
                   </div>
                 </section>
 
@@ -103,9 +103,9 @@
                   </div>
                   <article class="transition-copy">
                     <span>Then</span>
-                    <h2 class="transition-title">── 喂，小心！</h2>
+                    <h2 class="transition-title">-- Hey, careful!</h2>
                     <div id="transitionStream" class="transition-stream"></div>
-                    <button class="tap-button transition-tap hidden" data-action="enter-real">[ 睁开眼 → ]</button>
+                    <button class="tap-button transition-tap hidden" data-action="enter-real">[ Open your eyes -> ]</button>
                   </article>
                 </section>
 
@@ -114,8 +114,8 @@
                   <header class="scene-top dark">
                     <button class="backless">Scene</button>
                     <div>
-                      <strong>JYP 楼下</strong>
-                      <span id="realSceneSub">选择你们为什么在这里相遇</span>
+                      <strong>Outside JYP</strong>
+                      <span id="realSceneSub">Choose how you first crossed paths</span>
                     </div>
                   </header>
                   <div id="realMessages" class="real-messages"></div>
@@ -128,23 +128,23 @@
                   <div id="homePoster" class="home-poster">
                     <div class="poster-grain"></div>
                     <div class="poster-vignette"></div>
-                    <button class="poster-edge left" data-action="poster-prev" aria-label="上一张"></button>
-                    <button class="poster-edge right" data-action="poster-next" aria-label="下一张"></button>
+                    <button class="poster-edge left" data-action="poster-prev" aria-label="Previous"></button>
+                    <button class="poster-edge right" data-action="poster-next" aria-label="Next"></button>
                   </div>
 
                   <div id="posterUi" class="home-ui">
                     <header class="home-topbar">
                       <div class="home-stats">
                         <h2 id="posterName">Felix</h2>
-                        <p id="posterTopDays">相识第 1 天</p>
+                        <p id="posterTopDays">Day 1 since you met</p>
                       </div>
                     </header>
 
-                    <button type="button" class="stage-capsule" aria-label="当前关系阶段">
-                      <span id="posterStage">Stage 1: 熟悉</span>
+                    <button type="button" class="stage-capsule" aria-label="Current relationship stage">
+                      <span id="posterStage">Stage 1: Familiar</span>
                     </button>
 
-                    <section id="chronicleTimeline" class="chronicle-timeline" aria-label="时光集"></section>
+                    <section id="chronicleTimeline" class="chronicle-timeline" aria-label="Memory timeline"></section>
                   </div>
                   </div>
 
@@ -152,9 +152,9 @@
                     <article class="memory-polaroid">
                       <div id="memoryPhoto" class="memory-photo"></div>
                       <div class="memory-copy">
-                        <h3>JYP 楼下</h3>
-                        <p id="memorySummary">那天在 JYP 楼下，你们第一次真正说上话。他主动添加了你的聊天方式。</p>
-                        <span id="memoryMeta">📅 2026.05.18 · 📍 JYP 楼下 CODE-00</span>
+                        <h3>Outside JYP</h3>
+                        <p id="memorySummary">That day outside JYP, you truly spoke for the first time. He was the one who asked to add you.</p>
+                        <span id="memoryMeta">2026.05.18 · Outside JYP CODE-00</span>
                       </div>
                     </article>
                   </div>
@@ -165,13 +165,13 @@
                     <div class="chat-avatar" id="chatAvatar">F</div>
                     <div>
                       <strong id="chatName">Felix</strong>
-                      <span>Chat · 异地模式</span>
+                      <span>Chat · Long-distance mode</span>
                     </div>
-                    <button data-nav="scene">场景</button>
+                    <button data-nav="scene">Scene</button>
                   </header>
                   <div id="chatMessages" class="chat-messages"></div>
                   <form id="chatForm" class="chat-input-row">
-                    <input id="chatInput" autocomplete="off" placeholder="发消息…" />
+                    <input id="chatInput" autocomplete="off" placeholder="Message..." />
                     <button type="submit">↑</button>
                   </form>
                 </section>
@@ -179,32 +179,32 @@
                 <section id="screen-scene" class="screen scene-list-screen">
                   <header class="plain-header">
                     <div>
-                      <h2>你们可能会去的地方</h2>
+                      <h2>Places you might go together</h2>
                     </div>
                   </header>
                   <div class="scene-list">
                     <article>
                       <div class="scene-thumb jyp"></div>
                       <div>
-                        <span>刚刚发生</span>
-                        <strong>JYP 楼下</strong>
-                        <p>你们第一次真正说上话的地方。</p>
+                        <span>Just happened</span>
+                        <strong>Outside JYP</strong>
+                        <p>Where you truly spoke for the first time.</p>
                       </div>
                     </article>
                     <article>
                       <div class="scene-thumb store"></div>
                       <div>
-                        <span>也许以后</span>
-                        <strong>便利店</strong>
-                        <p>练习后，楼下还亮着的地方。</p>
+                        <span>Maybe later</span>
+                        <strong>Convenience Store</strong>
+                        <p>The place downstairs that stays lit after practice.</p>
                       </div>
                     </article>
                     <article>
                       <div class="scene-thumb practice"></div>
                       <div>
-                        <span>还没到那里</span>
-                        <strong>练习室外</strong>
-                        <p>等待有时候也是一种靠近。</p>
+                        <span>Not yet</span>
+                        <strong>Outside the Practice Room</strong>
+                        <p>Sometimes waiting is its own kind of closeness.</p>
                       </div>
                     </article>
                   </div>
@@ -215,30 +215,24 @@
                     <section class="me-profile-card">
                       <div class="me-cover" aria-hidden="true"></div>
                       <div class="me-profile-content">
-                        <img id="meAvatar" class="me-avatar" alt="用户头像" />
-                        <h2 id="visibleUserName">还不知道</h2>
+                        <img id="meAvatar" class="me-avatar" alt="User avatar" />
+                        <h2 id="visibleUserName">Not set</h2>
                         <p class="me-account">
                           <span id="meUid">UID: --</span>
                           <span id="meEmail">user@example.com</span>
                         </p>
                       </div>
                     </section>
-                    <nav class="me-function-list" aria-label="系统功能">
-                      <button type="button">评分我们<span>&gt;</span></button>
-                      <button type="button">意见反馈<span>&gt;</span></button>
-                      <button type="button">隐私政策<span>&gt;</span></button>
-                      <button type="button">服务条款<span>&gt;</span></button>
-                      <button type="button">账号退出<span>&gt;</span></button>
+                    <nav class="me-function-list" aria-label="Account settings">
+                      <button type="button">Rate Us<span>&gt;</span></button>
+                      <button type="button">Send Feedback<span>&gt;</span></button>
+                      <button type="button">Privacy Policy<span>&gt;</span></button>
+                      <button type="button">Terms of Service<span>&gt;</span></button>
+                      <button type="button">Log Out<span>&gt;</span></button>
                     </nav>
                   </div>
                 </section>
               </div>
-
-              <aside id="discoverDrawer" class="discover-drawer">
-                <div class="drawer-handle"></div>
-                <h3>发现其他成员</h3>
-                <div id="drawerMembers" class="drawer-members"></div>
-              </aside>
 
               <nav class="bottom-nav hidden" id="bottomNav">
                 <button data-nav="home" class="active">Home</button>

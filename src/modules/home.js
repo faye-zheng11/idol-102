@@ -14,7 +14,7 @@ export function createHomeModule() {
 }
 
 export function buildFriendBreakIce({ newCharacterName, viaCharacterName }) {
-  return `听说你是在${viaCharacterName}那家伙那拿到我联系方式的？嗯哼😊`;
+  return `I heard you got my contact from ${viaCharacterName}? Interesting.`;
 }
 
 export function createMemoryObject({
@@ -29,7 +29,7 @@ export function createMemoryObject({
   displayDate = "2026.05.18",
   code = "CODE-01",
 }) {
-  const safeLocation = location || "未知地点";
+  const safeLocation = location || "Unknown Place";
   const safeDate = displayDate || "2026.05.18";
   const initialImageUrl = imageUrl || "";
   return {
@@ -39,10 +39,10 @@ export function createMemoryObject({
     displayDate: safeDate,
     location: safeLocation,
     dayCount: Number(dayCount) || 1,
-    title: title || `《${safeLocation}的记忆》`,
+    title: title || `A Memory at ${safeLocation}`,
     imageUrl: initialImageUrl,
     initialImageUrl,
-    content: content || `${safeDate}，你们把这段发生在${safeLocation}的时间收进了记忆池。`,
+    content: content || `On ${safeDate}, you saved this moment at ${safeLocation} into your shared memories.`,
     chatHistorySnap: cloneChatHistory(chatHistorySnap),
     code,
     createdAt: new Date().toISOString(),
@@ -53,7 +53,7 @@ export function createMemoryObject({
 export function normalizeMemoryObject(memory = {}) {
   const imageUrl = memory.imageUrl || extractUrlFromCssImage(memory.image) || "";
   const displayDate = memory.displayDate || memory.date || "2026.05.18";
-  const location = memory.location || "未知地点";
+  const location = memory.location || "Unknown Place";
   return {
     memoryId: memory.memoryId || memory.id || `memory-${Date.now()}`,
     characterId: memory.characterId || "bang_chan",
@@ -61,13 +61,13 @@ export function normalizeMemoryObject(memory = {}) {
     displayDate,
     location,
     dayCount: Number(memory.dayCount) || dayCountFromLabel(memory.dayLabel) || 1,
-    title: memory.title || `《${location}的记忆》`,
+    title: memory.title || `A Memory at ${location}`,
     imageUrl,
     initialImageUrl: memory.initialImageUrl || imageUrl,
     content:
       memory.content ||
       memory.summary ||
-      `${displayDate}，你们把这段发生在${location}的时间收进了记忆池。`,
+      `On ${displayDate}, you saved this moment at ${location} into your shared memories.`,
     chatHistorySnap: cloneChatHistory(memory.chatHistorySnap || []),
     code: memory.code || "CODE-01",
     fresh: Boolean(memory.fresh),
