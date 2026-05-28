@@ -213,10 +213,15 @@
                 <section id="screen-me" class="screen me-screen">
                   <div class="me-scroll">
                     <section class="me-profile-card">
-                      <div class="me-cover" aria-hidden="true"></div>
+                      <button type="button" class="me-cover" data-action="edit-user-cover" aria-label="Change profile cover"></button>
                       <div class="me-profile-content">
-                        <img id="meAvatar" class="me-avatar" alt="User avatar" />
-                        <h2 id="visibleUserName">Not set</h2>
+                        <button type="button" class="me-avatar-button" data-action="edit-user-avatar" aria-label="Change profile photo">
+                          <img id="meAvatar" class="me-avatar" alt="User avatar" />
+                        </button>
+                        <button type="button" class="me-name-edit" data-action="edit-user-name">
+                          <span id="visibleUserName">Not set</span>
+                          <i aria-hidden="true">✎</i>
+                        </button>
                         <p class="me-account">
                           <span id="meUid">UID: --</span>
                           <span id="meEmail">user@example.com</span>
@@ -228,7 +233,8 @@
                       <button type="button">Send Feedback<span>&gt;</span></button>
                       <button type="button">Privacy Policy<span>&gt;</span></button>
                       <button type="button">Terms of Service<span>&gt;</span></button>
-                      <button type="button">Log Out<span>&gt;</span></button>
+                      <button type="button" data-action="request-logout">Log Out<span>&gt;</span></button>
+                      <button type="button" class="danger" data-action="request-delete-account">Delete Account<span>&gt;</span></button>
                     </nav>
                   </div>
                 </section>
@@ -242,6 +248,7 @@
               </nav>
 
               <div id="toast" class="toast hidden"></div>
+              <input id="profileImageInput" type="file" accept="image/*" hidden />
               <div class="home-indicator" aria-hidden="true"></div>
             </div>
         </article>

@@ -89,6 +89,7 @@ const initialState = {
   officialFriends: [],
   relationshipStages: {},
   unlockedStoryLines: {},
+  characterCustomizations: {},
   unlockedScenes: ["jyp"],
   pageCache: {
     chat: { draft: "", scrollTop: 0 },
@@ -358,6 +359,7 @@ function showToast(text) {
 
 let memberSliderIndex = 1;
 let memberSliderBusy = false;
+let pendingImageTarget = null;
 
 function memberSlideHtml(member) {
   return `
@@ -1139,8 +1141,9 @@ function fallbackReply(message) {
 function renderHome() {
   const activeCharacter = state.addedCharacters.find((member) => member.id === state.selected.id) || state.addedCharacters[0] || state.selected;
   state.selected = activeCharacter;
-  $("posterName").textContent = state.selected.name;
-  $("homePoster").style.backgroundImage = `url("${state.selected.image}")`;
+  const displayCharacter = getDisplayCharacter(state.selected);
+  $("posterName").textContent = displayCharacter.name;
+  $("homePoster").style.backgroundImage = `url("${displayCharacter.posterImage || displayCharacter.image}")`;
   $("homePoster").classList.toggle("alt", state.posterAlt);
   renderMemorySlots();
   const name = state.userPortrait.basic.preferredName;
@@ -1151,21 +1154,22 @@ function renderHome() {
 
 function renderMemorySlots() {
   const memories = getMemoryTimeline().filter(isValidMemory);
+  const dayGroups = getMemoryDayGroups(memories);
   const timeline = $("chronicleTimeline");
   if (!timeline) return;
-  const slots = Array.from({ length: 5 }, (_, index) => memories[index] || null);
+  const slots = Array.from({ length: 5 }, (_, index) => dayGroups[index] || null);
   timeline.innerHTML = slots
-    .map((memory, index) =>
-      memory
+    .map((group, index) =>
+      group
         ? `
-          <article class="chronicle-node ${memory.fresh ? "revealed" : ""}" style="--tilt:${index % 2 === 0 ? "-2.2deg" : "1.8deg"}">
-            <button type="button" class="chronicle-polaroid" data-action="open-memory" data-memory-id="${memory.memoryId}">
-              <span class="chronicle-photo" style="background-image:url('${memory.imageUrl}')"></span>
-              <em>${memory.location || "Untitled"}</em>
-              <b>Day ${memory.dayCount || 1}</b>
+          <article class="chronicle-node ${group.fresh ? "revealed" : ""}" style="--tilt:${index % 2 === 0 ? "-2.2deg" : "1.8deg"}">
+            <button type="button" class="chronicle-polaroid memory-stack-polaroid" data-action="open-memory-day" data-memory-day="${escapeAttr(group.key)}">
+              <span class="chronicle-photo" style="background-image:url('${group.cover.imageUrl}')"></span>
+              <em>${group.cover.location || "Untitled"}</em>
+              <b>${group.memories.length} ${group.memories.length === 1 ? "moment" : "moments"}</b>
             </button>
             <i class="chronicle-line"></i>
-            <strong class="chronicle-date">${memory.displayDate || "2026.05.18"}</strong>
+            <strong class="chronicle-date">${group.displayDate || "2026.05.18"}</strong>
           </article>
         `
         : `
@@ -1181,14 +1185,14 @@ function renderMemorySlots() {
         `,
     )
     .join("");
-  const active = memories.find((memory) => memory.fresh) || memories[memories.length - 1];
-  if (active) hydrateMemoryOverlay(active);
+  const activeGroup = dayGroups.find((group) => group.fresh) || dayGroups[dayGroups.length - 1];
+  if (activeGroup) hydrateMemoryDayOverlay(activeGroup);
 }
 
 function getMemoryTimeline() {
   const isInitialCharacter = state.selected.id === state.addedCharacters[0]?.id;
   if (!isInitialCharacter) {
-    return (state.unlockedStoryLines?.[state.selected.id] || []).map(normalizeMemoryObject).filter(isValidMemory).slice(0, 5);
+    return (state.unlockedStoryLines?.[state.selected.id] || []).map(normalizeMemoryObject).filter(isValidMemory);
   }
   const firstMeet = {
     memoryId: "jyp-first-meet",
@@ -1205,11 +1209,54 @@ function getMemoryTimeline() {
     code: "CODE-00",
   };
   const stories = (state.unlockedStoryLines?.[state.selected.id] || []).map(normalizeMemoryObject).filter(isValidMemory);
-  return [normalizeMemoryObject(firstMeet), ...stories].slice(0, 5);
+  return [normalizeMemoryObject(firstMeet), ...stories];
+}
+
+function getReplayMemory(memory) {
+  const normalized = normalizeMemoryObject(memory);
+  const custom = state.characterCustomizations?.[normalized.characterId] || {};
+  if (!custom.avatar) return normalized;
+  return {
+    ...normalized,
+    imageUrl: custom.avatar,
+  };
 }
 
 function isValidMemory(memory) {
   return Boolean(memory && memory.memoryId && memory.imageUrl && memory.location && memory.displayDate);
+}
+
+function getMemoryDayGroups(memories = getMemoryTimeline().filter(isValidMemory)) {
+  const groupsByDate = new Map();
+  memories.forEach((memory) => {
+    const normalized = normalizeMemoryObject(memory);
+    if (!isValidMemory(normalized)) return;
+    const key = normalized.displayDate || "2026.05.18";
+    if (!groupsByDate.has(key)) {
+      groupsByDate.set(key, {
+        key,
+        displayDate: key,
+        memories: [],
+        cover: normalized,
+        fresh: false,
+      });
+    }
+    const group = groupsByDate.get(key);
+    group.memories.push(normalized);
+    group.fresh = group.fresh || normalized.fresh;
+  });
+  return Array.from(groupsByDate.values()).map((group) => ({
+    ...group,
+    cover: group.memories[0],
+  }));
+}
+
+function getMemoryDayByKey(dayKey) {
+  return getMemoryDayGroups().find((group) => group.key === dayKey);
+}
+
+function getMemoryDayByMemoryId(memoryId) {
+  return getMemoryDayGroups().find((group) => group.memories.some((memory) => memory.memoryId === memoryId));
 }
 
 function switchAddedCharacter(delta) {
@@ -1228,10 +1275,26 @@ function switchAddedCharacter(delta) {
 
 function hydrateMemoryOverlay(memory) {
   const normalized = normalizeMemoryObject(memory);
+  const group = getMemoryDayByMemoryId(normalized.memoryId);
+  if (group) {
+    hydrateMemoryDayOverlay(group, normalized.memoryId);
+    return;
+  }
   const overlay = $("memoryOverlay");
   overlay.dataset.memoryId = normalized.memoryId;
+  overlay.dataset.memoryDay = normalized.displayDate;
   overlay.classList.remove("editing");
   overlay.innerHTML = renderMemoryDetail(normalized);
+}
+
+function hydrateMemoryDayOverlay(group, activeMemoryId = group?.memories?.[0]?.memoryId) {
+  if (!group?.memories?.length) return;
+  const overlay = $("memoryOverlay");
+  overlay.dataset.memoryDay = group.key;
+  overlay.dataset.memoryId = activeMemoryId || group.memories[0].memoryId;
+  overlay.classList.remove("editing");
+  overlay.innerHTML = renderMemoryDayCarousel(group, activeMemoryId);
+  bindMemoryCarousel(activeMemoryId);
 }
 
 function renderMemoryDetail(memory, editing = false) {
@@ -1262,6 +1325,88 @@ function renderMemoryDetail(memory, editing = false) {
       }
     </article>
   `;
+}
+
+function renderMemoryDayCarousel(group, activeMemoryId) {
+  const memories = group.memories;
+  const activeIndex = Math.max(0, memories.findIndex((memory) => memory.memoryId === activeMemoryId));
+  return `
+    <section class="memory-carousel-shell" data-memory-carousel-shell>
+      <div class="memory-carousel" data-memory-carousel>
+        ${memories.map((memory, index) => renderMemoryCarouselCard(memory, index)).join("")}
+      </div>
+      <footer class="memory-carousel-footer">
+        <span id="memoryCounter" class="memory-counter">${String(activeIndex + 1).padStart(2, "0")} / ${String(memories.length).padStart(2, "0")} moments</span>
+        <div class="memory-progress" aria-hidden="true"><i id="memoryProgressFill" style="width:${((activeIndex + 1) / memories.length) * 100}%"></i></div>
+        <div class="memory-dots" aria-hidden="true">
+          ${memories.map((_, index) => `<i class="${index === activeIndex ? "active" : ""}"></i>`).join("")}
+        </div>
+      </footer>
+    </section>
+  `;
+}
+
+function renderMemoryCarouselCard(memory, index) {
+  return `
+    <article class="memory-polaroid memory-carousel-card" data-memory-card data-memory-id="${escapeAttr(memory.memoryId)}" data-memory-index="${index}">
+      <div class="memory-photo" style="background-image:url('${escapeAttr(memory.imageUrl)}')"></div>
+      <div class="memory-copy">
+        <h3 class="memory-title">${escapeHtml(memory.title)}</h3>
+        <div class="polaroid-text-zone">${escapeHtml(memory.content)}</div>
+        <span class="memory-meta">
+          <b>${escapeHtml(memory.displayDate)}</b>
+          <i>📍 ${escapeHtml(memory.location)} ${escapeHtml(memory.code || "CODE-01")}</i>
+        </span>
+      </div>
+      <div class="memory-actions">
+        <button type="button" data-action="memory-retrograde">Memory Replay</button>
+        <button type="button" data-action="edit-memory">Edit Memory</button>
+      </div>
+    </article>
+  `;
+}
+
+function bindMemoryCarousel(activeMemoryId) {
+  const overlay = $("memoryOverlay");
+  const carousel = overlay.querySelector("[data-memory-carousel]");
+  if (!carousel) return;
+  const cards = Array.from(carousel.querySelectorAll("[data-memory-card]"));
+  const update = () => updateMemoryCarouselState(carousel, cards);
+  carousel.addEventListener("scroll", update, { passive: true });
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      overlay.dataset.memoryId = card.dataset.memoryId;
+      updateMemoryCarouselState(carousel, cards);
+    });
+  });
+  requestAnimationFrame(() => {
+    const activeCard = cards.find((card) => card.dataset.memoryId === activeMemoryId) || cards[0];
+    activeCard?.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+    update();
+  });
+}
+
+function updateMemoryCarouselState(carousel, cards) {
+  if (!cards.length) return;
+  const overlay = $("memoryOverlay");
+  const carouselCenter = carousel.scrollLeft + carousel.clientWidth / 2;
+  let activeIndex = 0;
+  let closestDistance = Infinity;
+  cards.forEach((card, index) => {
+    const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+    const distance = Math.abs(cardCenter - carouselCenter);
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      activeIndex = index;
+    }
+  });
+  cards.forEach((card, index) => card.classList.toggle("active", index === activeIndex));
+  const activeCard = cards[activeIndex];
+  overlay.dataset.memoryId = activeCard.dataset.memoryId;
+  const total = cards.length;
+  $("memoryCounter").textContent = `${String(activeIndex + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")} moments`;
+  $("memoryProgressFill").style.width = `${((activeIndex + 1) / total) * 100}%`;
+  overlay.querySelectorAll(".memory-dots i").forEach((dot, index) => dot.classList.toggle("active", index === activeIndex));
 }
 
 function getMemoryById(memoryId) {
@@ -1295,7 +1440,9 @@ function saveMemoryEdit() {
     imageUrl: imageUrl || memory.imageUrl,
   }));
   const next = getMemoryById(memoryId);
-  if (next) hydrateMemoryOverlay(next);
+  const group = overlay.dataset.memoryDay ? getMemoryDayByKey(overlay.dataset.memoryDay) : getMemoryDayByMemoryId(memoryId);
+  if (group) hydrateMemoryDayOverlay(group, memoryId);
+  else if (next) hydrateMemoryOverlay(next);
 }
 
 function resetMemoryImage() {
@@ -1320,18 +1467,19 @@ function startMemoryRetrograde() {
 }
 
 function renderRetrogradeReview(memory) {
+  const reviewMemory = getReplayMemory(memory);
   const view = document.createElement("section");
   view.id = "retrogradeReview";
   view.className = "retrograde-review";
-  view.style.setProperty("--review-bg", `url('${memory.imageUrl}')`);
+  view.style.setProperty("--review-bg", `url('${reviewMemory.imageUrl}')`);
   view.innerHTML = `
     <header class="retrograde-header">
       <button type="button" data-action="exit-retrograde">‹ Exit Replay</button>
-      <span>City Marker · ${escapeHtml(memory.location)}</span>
+      <span>City Marker · ${escapeHtml(reviewMemory.location)}</span>
     </header>
-    <p class="retrograde-voiceover">${escapeHtml(memory.content)}</p>
+    <p class="retrograde-voiceover">${escapeHtml(reviewMemory.content)}</p>
     <div class="retrograde-messages">
-      ${memory.chatHistorySnap.length ? memory.chatHistorySnap.map(renderRetrogradeBubble).join("") : `<div class="bubble system">No chat snapshot was saved for this memory.</div>`}
+      ${reviewMemory.chatHistorySnap.length ? reviewMemory.chatHistorySnap.map(renderRetrogradeBubble).join("") : `<div class="bubble system">No chat snapshot was saved for this memory.</div>`}
     </div>
   `;
   $("screen-home").appendChild(view);
@@ -1349,6 +1497,15 @@ function exitRetrogradeReview() {
 }
 
 document.addEventListener("change", (event) => {
+  if (event.target.id === "profileImageInput") {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const imageUrl = URL.createObjectURL(file);
+    applyPickedImage(imageUrl);
+    event.target.value = "";
+    closeProfileModal();
+    return;
+  }
   if (event.target.id !== "memoryImageInput") return;
   const file = event.target.files?.[0];
   const card = $("memoryOverlay").querySelector("[data-memory-card]");
@@ -1434,8 +1591,152 @@ function renderMe() {
   const name = state.userPortrait.basic.preferredName || "You";
   $("visibleUserName").textContent = name;
   $("meAvatar").src = state.userPortrait.basic.avatar || state.selected.image;
+  $("screen-me")?.style.setProperty("--me-cover-img", `url("${state.userPortrait.basic.cover || "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=80"}")`);
   $("meUid").textContent = `UID: ${String(state.userId || "").slice(0, 8).toUpperCase() || "--"}`;
   $("meEmail").textContent = state.userPortrait.basic.email || "user@example.com";
+}
+
+function getDisplayCharacter(character = {}) {
+  const custom = state.characterCustomizations?.[character.id] || {};
+  return {
+    ...character,
+    name: custom.nickname || character.name,
+    avatar: custom.avatar || character.avatar || character.image,
+    image: custom.avatar || character.image,
+    posterImage: custom.posterImage || custom.avatar || character.image,
+    chatBackground: custom.chatBackground || "",
+  };
+}
+
+function openImageChoice(target) {
+  pendingImageTarget = target;
+  closeProfileModal();
+  $("phoneViewport").insertAdjacentHTML("beforeend", renderImageChoiceModal());
+}
+
+function renderImageChoiceModal() {
+  return `
+    <div class="profile-modal-layer">
+      <button type="button" class="profile-modal-scrim" data-action="close-profile-modal" aria-label="Close"></button>
+      <article class="profile-action-sheet">
+        <button type="button" data-action="choose-profile-camera">Take Photo</button>
+        <button type="button" data-action="choose-profile-album">Choose from Album</button>
+        <button type="button" data-action="close-profile-modal">Cancel</button>
+      </article>
+    </div>
+  `;
+}
+
+function closeProfileModal() {
+  $("phoneViewport")?.querySelector(".profile-modal-layer")?.remove();
+}
+
+function openProfileFilePicker(source = "album") {
+  const input = $("profileImageInput");
+  if (!input) return;
+  if (source === "camera") input.setAttribute("capture", "environment");
+  else input.removeAttribute("capture");
+  input.click();
+}
+
+function applyPickedImage(imageUrl) {
+  if (!pendingImageTarget) return;
+  if (pendingImageTarget.type === "user-avatar") {
+    setAppState((current) => ({
+      userPortrait: {
+        ...current.userPortrait,
+        basic: { ...current.userPortrait.basic, avatar: imageUrl },
+      },
+    }));
+    renderMe();
+    return;
+  }
+  if (pendingImageTarget.type === "user-cover") {
+    setAppState((current) => ({
+      userPortrait: {
+        ...current.userPortrait,
+        basic: { ...current.userPortrait.basic, cover: imageUrl },
+      },
+    }));
+    renderMe();
+    return;
+  }
+}
+
+function openUserNameEditor() {
+  closeProfileModal();
+  const currentName = state.userPortrait.basic.preferredName || "You";
+  $("phoneViewport").insertAdjacentHTML("beforeend", `
+    <div class="profile-modal-layer">
+      <button type="button" class="profile-modal-scrim" data-action="close-profile-modal" aria-label="Close"></button>
+      <article class="profile-edit-modal">
+        <h3>Edit Nickname</h3>
+        <input id="profileNameInput" value="${escapeAttr(currentName)}" maxlength="24" />
+        <button type="button" data-action="save-user-name">Confirm</button>
+      </article>
+    </div>
+  `);
+  setTimeout(() => $("profileNameInput")?.focus(), 50);
+}
+
+function saveUserName() {
+  const value = $("profileNameInput")?.value.trim();
+  if (!value) return;
+  setAppState((current) => ({
+    userPortrait: {
+      ...current.userPortrait,
+      basic: { ...current.userPortrait.basic, preferredName: value },
+    },
+  }));
+  closeProfileModal();
+  renderMe();
+}
+
+function requestAccountAction(kind) {
+  closeAccountConfirm();
+  $("screen-me").insertAdjacentHTML("beforeend", renderAccountConfirm(kind));
+}
+
+function closeAccountConfirm() {
+  $("screen-me")?.querySelector(".account-confirm-layer")?.remove();
+}
+
+function renderAccountConfirm(kind) {
+  const isDelete = kind === "delete";
+  return `
+    <div class="account-confirm-layer">
+      <button type="button" class="account-confirm-scrim" data-action="cancel-account-action" aria-label="Close confirmation"></button>
+      <article class="account-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="accountConfirmTitle">
+        <h3 id="accountConfirmTitle">${isDelete ? "Delete Account?" : "Log Out?"}</h3>
+        <p>${isDelete ? "This will clear your local account data in this preview and return you to the opening screen." : "You will return to the opening screen."}</p>
+        <div>
+          <button type="button" data-action="confirm-account-action" data-account-action="${kind}">${isDelete ? "Delete Account" : "Log Out"}</button>
+          <button type="button" data-action="cancel-account-action">Cancel</button>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function confirmAccountAction(kind) {
+  closeAccountConfirm();
+  if (kind === "delete") {
+    try {
+      localStorage.removeItem("idol102.memoryCapsules.v1");
+    } catch {
+      /* local cache is optional in embedded previews */
+    }
+    setAppState({
+      ...structuredClone(initialState),
+      userId: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    });
+    renderMembers();
+    renderMe();
+    showToast("Account deleted");
+  } else {
+    showToast("Logged out");
+  }
+  show("splash", { force: true });
 }
 
 document.addEventListener("click", (event) => {
@@ -1484,7 +1785,13 @@ document.addEventListener("click", (event) => {
     if (memory) hydrateMemoryOverlay(memory);
     $("memoryOverlay").classList.remove("hidden");
   }
-  if (action === "close-memory") $("memoryOverlay").classList.add("hidden");
+  if (action === "open-memory-day") {
+    const trigger = event.target.closest("[data-memory-day]");
+    const group = getMemoryDayByKey(trigger?.dataset.memoryDay);
+    if (group) hydrateMemoryDayOverlay(group);
+    $("memoryOverlay").classList.remove("hidden");
+  }
+  if (action === "close-memory" && !event.target.closest(".memory-polaroid, .memory-carousel-footer")) $("memoryOverlay").classList.add("hidden");
   if (action === "edit-memory") {
     const memory = getMemoryById($("memoryOverlay").dataset.memoryId);
     if (memory) $("memoryOverlay").innerHTML = renderMemoryDetail(memory, true);
@@ -1494,6 +1801,16 @@ document.addEventListener("click", (event) => {
   if (action === "memory-reset-image") resetMemoryImage();
   if (action === "memory-retrograde") startMemoryRetrograde();
   if (action === "exit-retrograde") exitRetrogradeReview();
+  if (action === "request-logout") requestAccountAction("logout");
+  if (action === "request-delete-account") requestAccountAction("delete");
+  if (action === "cancel-account-action") closeAccountConfirm();
+  if (action === "confirm-account-action") confirmAccountAction(event.target.dataset.accountAction);
+  if (action === "edit-user-cover") openImageChoice({ type: "user-cover" });
+  if (action === "edit-user-avatar") openImageChoice({ type: "user-avatar" });
+  if (action === "choose-profile-camera" || action === "choose-profile-album") openProfileFilePicker(action === "choose-profile-camera" ? "camera" : "album");
+  if (action === "close-profile-modal") closeProfileModal();
+  if (action === "edit-user-name") openUserNameEditor();
+  if (action === "save-user-name") saveUserName();
   if (action === "poster-prev" || action === "poster-next") {
     switchAddedCharacter(action === "poster-prev" ? -1 : 1);
   }

@@ -192,6 +192,7 @@ export const GeneralLifeScenes = {
 
 const STYLE_ID = "scene-module-styles";
 const DEFAULT_CHARACTER_ID = "bang_chan";
+const LOCKED_PRIVATE_SPACE_ID = "apartment";
 const MAP_SCENE_IDS = ["company", "practice_room", "coffee_shop", "mall", "apartment", "park"];
 const MAP_LABELS = {
   company: { x: 22, y: 8, w: 38, h: 26, sx: 63, sy: 16, delay: 0 },
@@ -228,7 +229,7 @@ export function createSceneModule(deps = {}) {
       <div class="scene-city scene-main-view scene-map-view">
         <section class="scene-city-map" aria-label="City scene map">
           <img src="${escapeAttr(sceneImages.city_map)}" alt="City scene map" />
-          ${MAP_SCENE_IDS.map((id) => renderSceneHotspot(GeneralLifeScenes[id], getActiveSceneSession(getState()))).join("")}
+          ${MAP_SCENE_IDS.map((id) => renderSceneHotspot(GeneralLifeScenes[id], getActiveSceneSession(getState()), getState())).join("")}
         </section>
       </div>
     `;
@@ -239,6 +240,11 @@ export function createSceneModule(deps = {}) {
   }
 
   function handleMapPlaceClick(placeId) {
+    if (placeId === LOCKED_PRIVATE_SPACE_ID) {
+      showPrivateSpaceLocked();
+      return;
+    }
+
     const activeScene = getActiveSceneSession(getState());
     if (!activeScene) {
       playWindowZoomTransition(placeId);
@@ -249,6 +255,18 @@ export function createSceneModule(deps = {}) {
       return;
     }
     showLeaveConfirm(placeId, activeScene);
+  }
+
+  function showPrivateSpaceLocked() {
+    closePrivateSpaceLocked();
+    getRoot().insertAdjacentHTML("beforeend", renderPrivateSpaceLocked());
+    getRoot().querySelectorAll("[data-scene-close-private-lock]").forEach((button) => {
+      button.addEventListener("click", closePrivateSpaceLocked);
+    });
+  }
+
+  function closePrivateSpaceLocked() {
+    getRoot().querySelector(".scene-private-lock-layer")?.remove();
   }
 
   function playWindowZoomTransition(placeId) {
@@ -376,7 +394,8 @@ export function createSceneModule(deps = {}) {
     const state = getState();
     const contacts = state.unlockedContacts || state.officialFriends || {};
     const list = Array.isArray(contacts) ? contacts : Object.values(contacts);
-    return list.length ? list : [{ id: DEFAULT_CHARACTER_ID, name: "Bang Chan", initial: "BC" }];
+    const source = list.length ? list : [{ id: DEFAULT_CHARACTER_ID, name: "Bang Chan", initial: "BC" }];
+    return source.map((contact) => getDisplayContact(contact, state));
   }
 
   function goChat(characterId) {
@@ -464,11 +483,15 @@ export function createSceneModule(deps = {}) {
     renderPlace: renderSceneDetail,
     sendDateInvite,
     onEnter,
-    onLeave: closeContactSheet,
+    onLeave: () => {
+      closeContactSheet();
+      closeLeaveConfirm();
+      closePrivateSpaceLocked();
+    },
   };
 }
 
-function renderSceneHotspot(place, activeScene = null) {
+function renderSceneHotspot(place, activeScene = null, state = {}) {
   const mapSpot = MAP_LABELS[place.id];
   const hasActiveHere = activeScene?.placeId === place.id;
   if (mapSpot) {
@@ -481,7 +504,7 @@ function renderSceneHotspot(place, activeScene = null) {
         style="--x:${mapSpot.x}%;--y:${mapSpot.y}%;--w:${mapSpot.w}%;--h:${mapSpot.h}%;--sx:${mapSpot.sx}%;--sy:${mapSpot.sy}%;--delay:${mapSpot.delay || 0}s"
       >
         <span>${escapeHtml(place.name)}</span>
-        ${hasActiveHere ? renderActiveSceneMarker(activeScene) : ""}
+        ${hasActiveHere ? renderActiveSceneMarker(activeScene, state) : ""}
       </button>
     `;
   }
@@ -493,15 +516,28 @@ function renderSceneHotspot(place, activeScene = null) {
   `;
 }
 
-function renderActiveSceneMarker(activeScene) {
-  const image = activeScene.characterImage || "";
-  const name = activeScene.characterName || "";
+function renderActiveSceneMarker(activeScene, state = {}) {
+  const display = getDisplayContact({ id: activeScene.characterId, name: activeScene.characterName, image: activeScene.characterImage }, state);
+  const image = display.image || activeScene.characterImage || "";
+  const name = display.name || activeScene.characterName || "";
   return `
     <span class="scene-active-marker" aria-label="Scene in progress with ${escapeAttr(name)}">
       ${image ? `<img src="${escapeAttr(image)}" alt="${escapeAttr(name)}" />` : `<i>${escapeHtml(name.slice(0, 1) || "!")}</i>`}
-      <b>!</b>
+      <b aria-hidden="true">!</b>
     </span>
   `;
+}
+
+function getDisplayContact(contact = {}, state = {}) {
+  const id = contact.id || contact.characterId || DEFAULT_CHARACTER_ID;
+  const custom = state.characterCustomizations?.[id] || {};
+  return {
+    ...contact,
+    id,
+    name: custom.nickname || contact.name || contact.displayName || "Bang Chan",
+    image: custom.avatar || contact.image || contact.avatar || "",
+    avatar: custom.avatar || contact.avatar || contact.image || "",
+  };
 }
 
 function renderLeaveConfirm(activeScene) {
@@ -516,6 +552,19 @@ function renderLeaveConfirm(activeScene) {
           <button type="button" data-scene-confirm-leave>Leave Scene</button>
           <button type="button" data-scene-return-active>Go Back</button>
         </div>
+      </article>
+    </div>
+  `;
+}
+
+function renderPrivateSpaceLocked() {
+  return `
+    <div class="scene-private-lock-layer">
+      <button type="button" class="scene-private-lock-scrim" data-scene-close-private-lock aria-label="Close"></button>
+      <article class="scene-private-lock-modal" role="dialog" aria-modal="true" aria-labelledby="scenePrivateLockTitle">
+        <h3 id="scenePrivateLockTitle">Not Quite Ready</h3>
+        <p>Your relationship hasn't reached the stage to access his private space yet.</p>
+        <button type="button" data-scene-close-private-lock>OK</button>
       </article>
     </div>
   `;
@@ -587,7 +636,7 @@ function injectStyles(doc) {
     .scene-main-view:before{content:"";position:absolute;z-index:6;inset:0;background:linear-gradient(30deg,rgba(255,255,255,.026) 1px,transparent 1px),linear-gradient(150deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:58px 58px,58px 58px;opacity:.36;pointer-events:none}
     .scene-map-view{background:#101823}.scene-city-map{position:absolute;z-index:4;inset:0;overflow:hidden;background:#0f1722}.scene-city-map:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(5,7,12,.12),transparent 18%,transparent 74%,rgba(5,7,12,.48)),radial-gradient(circle at 50% 38%,transparent 46%,rgba(0,0,0,.12));pointer-events:none}.scene-city-map img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;filter:saturate(1.08) contrast(1.03)}
     .scene-map-hotspot{position:absolute;z-index:8;left:var(--x);top:var(--y);width:var(--w);height:var(--h);padding:0;border:1px solid rgba(255,255,255,0);border-radius:8px;background:rgba(255,255,255,0);color:#fff;transition:background .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease;-webkit-tap-highlight-color:transparent}.scene-map-hotspot:before{content:"";position:absolute;left:var(--sx);top:var(--sy);width:11px;height:11px;border-radius:50%;background:#fff5d5;border:2px solid rgba(120,164,255,.92);box-shadow:0 0 0 5px rgba(120,164,255,.18),0 0 26px rgba(255,255,255,.62);transform:translate(-50%,-50%);opacity:.78;animation:scenePinPulse 1.8s ease-in-out infinite;animation-delay:var(--delay);transition:opacity .18s ease,transform .18s ease}.scene-map-hotspot span{position:absolute;left:var(--sx);top:var(--sy);display:block;min-width:48px;padding:6px 9px;border:1px solid rgba(255,255,255,.48);border-radius:6px;background:rgba(13,19,32,.76);box-shadow:0 10px 28px rgba(0,0,0,.36),0 0 20px rgba(132,166,255,.3),inset 0 1px 0 rgba(255,255,255,.24);backdrop-filter:blur(8px);color:#fff;font-size:14px;font-weight:900;line-height:1;text-align:center;text-shadow:0 0 12px rgba(119,158,255,.78),0 2px 8px rgba(0,0,0,.48);white-space:nowrap;transform:translate(-50%,calc(-100% - 9px));pointer-events:none;animation:sceneSignBlink 1.8s ease-in-out infinite;animation-delay:var(--delay)}.scene-map-hotspot span:after{content:"";position:absolute;left:50%;bottom:-6px;width:10px;height:10px;background:rgba(13,19,32,.76);border-right:1px solid rgba(255,255,255,.32);border-bottom:1px solid rgba(255,255,255,.32);transform:translateX(-50%) rotate(45deg)}
-    .scene-map-hotspot .scene-active-marker{position:absolute;z-index:9;left:calc(var(--sx) + 34px);top:var(--sy);display:flex;align-items:center;gap:4px;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;color:inherit;font-size:inherit;font-weight:inherit;line-height:1;text-align:left;text-shadow:none;white-space:nowrap;transform:translateY(calc(-100% - 9px));animation:none;pointer-events:none}.scene-map-hotspot .scene-active-marker:after{display:none}.scene-map-hotspot .scene-active-marker img,.scene-map-hotspot .scene-active-marker i{width:26px;height:26px;border-radius:50%;object-fit:cover;display:grid;place-items:center;border:2px solid #ffd6e5;background:rgba(255,138,174,.22);color:#fff;font-style:normal;font-size:11px;font-weight:900;box-shadow:0 0 0 4px rgba(255,138,174,.2),0 0 18px rgba(255,138,174,.58)}.scene-map-hotspot .scene-active-marker b{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#ffd6e5;color:#25101a;font-size:14px;font-weight:1000;line-height:1;box-shadow:0 0 18px rgba(255,138,174,.82);animation:sceneAlertBlink .78s ease-in-out infinite}.scene-map-hotspot.has-active-scene:before{background:#ffd6e5;border-color:#ff8aae;box-shadow:0 0 0 7px rgba(255,138,174,.2),0 0 34px rgba(255,138,174,.72)}
+    .scene-map-hotspot .scene-active-marker{position:absolute;z-index:9;left:calc(var(--sx) + 30px);top:var(--sy);display:block;width:36px;height:36px;min-width:0;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none;backdrop-filter:none;color:inherit;font-size:inherit;font-weight:inherit;line-height:1;text-align:left;text-shadow:none;white-space:normal;transform:translate(-50%,calc(-100% - 8px));animation:none;pointer-events:none}.scene-map-hotspot .scene-active-marker:after{display:none}.scene-map-hotspot .scene-active-marker img,.scene-map-hotspot .scene-active-marker i{position:absolute;left:50%;top:50%;width:30px;height:30px;border-radius:50%;object-fit:cover;display:grid;place-items:center;border:2px solid #ffd6e5;background:rgba(255,138,174,.22);color:#fff;font-style:normal;font-size:11px;font-weight:900;box-shadow:0 0 0 4px rgba(255,138,174,.2),0 0 18px rgba(255,138,174,.58);transform:translate(-50%,-50%)}.scene-map-hotspot .scene-active-marker b{position:absolute;right:-1px;top:-1px;width:16px;height:16px;display:grid;place-items:center;border-radius:50%;background:#ffd6e5;color:#25101a;font-size:12px;font-weight:1000;line-height:1;box-shadow:0 0 0 2px rgba(60,23,39,.7),0 0 18px rgba(255,138,174,.82);animation:sceneAlertBlink .78s ease-in-out infinite}.scene-map-hotspot.has-active-scene:before{background:#ffd6e5;border-color:#ff8aae;box-shadow:0 0 0 7px rgba(255,138,174,.2),0 0 34px rgba(255,138,174,.72)}
     .scene-map-hotspot:active{transform:scale(.985);background:rgba(132,166,255,.08);border-color:rgba(255,255,255,.18);box-shadow:inset 0 0 28px rgba(255,255,255,.08)}.scene-map-hotspot:active:before{opacity:1;transform:translate(-50%,-50%) scale(1.14)}
     .scene-window-grid{position:absolute;z-index:4;left:0;right:0;top:132px;height:526px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:243px;gap:10px 6px;padding:0 10px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;mask-image:linear-gradient(to bottom,#000 0,#000 95%,rgba(0,0,0,.24) 100%)}.scene-window-grid::-webkit-scrollbar{display:none}
     .scene-map-fog{position:absolute;z-index:1;border-radius:50%;filter:blur(24px);pointer-events:none}.scene-map-fog-one{right:8%;top:8%;width:230px;height:108px;background:rgba(190,200,210,.12)}.scene-map-fog-two{left:10%;bottom:18%;width:220px;height:96px;background:rgba(201,169,110,.08)}
@@ -600,6 +649,7 @@ function injectStyles(doc) {
     .scene-action-lines{position:relative;z-index:3;display:flex;flex-direction:column;gap:10px;min-height:0;overflow-y:auto;margin-top:12px;padding-bottom:8px;scrollbar-width:none}.scene-action-lines::-webkit-scrollbar{display:none}.scene-action-line{display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;min-height:62px;padding:10px 12px 10px 14px;border:1px solid rgba(255,255,255,.13);border-radius:18px;background:rgba(255,255,255,.055);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}.scene-action-line strong{display:block;color:#fff9ff;font-size:16px;font-weight:750;line-height:1.22}.scene-action-line button{min-width:68px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.06);color:#fff9ff;font-size:12px;font-weight:850;padding:10px 14px;backdrop-filter:blur(12px)}
     .scene-contact-sheet-layer{position:absolute;z-index:150;inset:0;display:flex;align-items:flex-end;padding-bottom:112px}.scene-contact-scrim{position:absolute;inset:0;background:rgba(0,0,0,.52);backdrop-filter:blur(7px)}.scene-contact-sheet{position:relative;width:100%;max-height:286px;padding:10px 18px 18px;border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.045)),rgba(18,19,23,.9);border:1px solid rgba(255,255,255,.14);box-shadow:0 -24px 80px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(24px)}.scene-contact-handle{width:42px;height:4px;border-radius:4px;background:rgba(255,255,255,.22);margin:0 auto 16px}.scene-contact-sheet span{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(201,169,110,.72)}.scene-contact-sheet h3{margin-top:5px;font-size:18px;font-weight:600}.scene-contact-picks{display:flex;gap:10px;overflow-x:auto;margin-top:16px;padding-bottom:4px;scrollbar-width:none}.scene-contact-picks::-webkit-scrollbar{display:none}.scene-contact-pick{min-width:118px;min-height:118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:14px 10px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.07);color:var(--cream)}.scene-contact-pick img,.scene-contact-pick i{width:54px;height:54px;border-radius:50%;object-fit:cover;background:rgba(201,169,110,.14);border:1px solid rgba(201,169,110,.36);display:grid;place-items:center;color:var(--gold);font-style:normal;font-size:12px;font-weight:800}.scene-contact-pick strong{font-size:12px;line-height:1.2;white-space:nowrap}
     .scene-leave-modal-layer{position:absolute;z-index:180;inset:0;display:grid;place-items:center;padding:18px}.scene-leave-scrim{position:absolute;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(8px)}.scene-leave-modal{position:relative;width:100%;padding:20px;border:1px solid rgba(255,255,255,.16);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,138,174,.055)),rgba(18,19,25,.92);box-shadow:0 28px 90px rgba(0,0,0,.54),inset 0 1px 0 rgba(255,255,255,.14);color:#fff9ff}.scene-leave-close{position:absolute;right:12px;top:12px;width:32px;height:32px;min-height:0!important;display:grid;place-items:center;border:1px solid rgba(255,255,255,.16)!important;border-radius:50%!important;background:rgba(255,255,255,.08)!important;color:#fff9ff!important;font-size:22px!important;font-weight:500!important;line-height:1!important}.scene-leave-modal h3{padding-right:34px;font-size:18px;line-height:1.3}.scene-leave-modal p{margin-top:9px;color:rgba(255,249,255,.68);font-size:13px}.scene-leave-modal div{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.scene-leave-modal div button{min-height:42px;border-radius:14px;font-size:13px;font-weight:850}.scene-leave-modal div button:first-child{background:linear-gradient(135deg,#ffd6e5,#ff8aae 60%,#c25b84);color:#25101a}.scene-leave-modal div button:last-child{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff9ff}
+    .scene-private-lock-layer{position:absolute;z-index:190;inset:0;display:grid;place-items:center;padding:24px}.scene-private-lock-scrim{position:absolute;inset:0;border:0;background:rgba(0,0,0,.58);backdrop-filter:blur(8px)}.scene-private-lock-modal{position:relative;width:min(100%,316px);padding:24px 20px 18px;border:1px solid rgba(255,255,255,.18);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.14),rgba(255,138,174,.055)),rgba(18,19,25,.94);box-shadow:0 28px 90px rgba(0,0,0,.54),inset 0 1px 0 rgba(255,255,255,.14);color:#fff9ff;text-align:center}.scene-private-lock-modal h3{font-size:20px;font-weight:850;line-height:1.2}.scene-private-lock-modal p{margin:12px auto 20px;max-width:248px;color:rgba(255,249,255,.72);font-size:13px;line-height:1.45}.scene-private-lock-modal button{width:100%;min-height:44px;border:0;border-radius:14px;background:linear-gradient(135deg,#ffd6e5,#ff8aae 62%,#c25b84);color:#25101a;font-size:14px;font-weight:900}
     @keyframes sceneSignBlink{0%,100%{opacity:.62;filter:brightness(.82);box-shadow:0 10px 28px rgba(0,0,0,.36),0 0 12px rgba(132,166,255,.16),inset 0 1px 0 rgba(255,255,255,.18)}45%,62%{opacity:1;filter:brightness(1.22);box-shadow:0 10px 28px rgba(0,0,0,.36),0 0 26px rgba(132,166,255,.55),0 0 12px rgba(255,245,213,.34),inset 0 1px 0 rgba(255,255,255,.34)}}@keyframes scenePinPulse{0%,100%{opacity:.56;box-shadow:0 0 0 4px rgba(120,164,255,.12),0 0 18px rgba(255,255,255,.42)}48%,62%{opacity:1;transform:translate(-50%,-50%) scale(1.18);box-shadow:0 0 0 8px rgba(120,164,255,.24),0 0 32px rgba(255,255,255,.86)}}@keyframes sceneAlertBlink{0%,100%{opacity:.28;transform:scale(.82)}45%,62%{opacity:1;transform:scale(1.12)}}@keyframes scenePanelIn{from{opacity:0;transform:scale(1.03)}to{opacity:1;transform:scale(1)}}@keyframes sceneReturn{from{opacity:1;transform:scale(1.02)}to{opacity:0;transform:scale(.96)}}
   `;
   doc.head.appendChild(style);
