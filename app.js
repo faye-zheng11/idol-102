@@ -273,6 +273,11 @@ function shouldStartInAppPreview() {
   return params.get("preview") === "app" || params.get("mode") === "app";
 }
 
+function getSnapshotPreview() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("snapshot") || "";
+}
+
 function bootstrapAppPreview() {
   const previewMember = members.find((member) => member.id === "bang_chan") || members[0];
   const previewIndex = members.findIndex((member) => member.id === previewMember.id);
@@ -348,6 +353,59 @@ function bootstrapAppPreview() {
       [previewMember.id]: [{ id: "preview-first-message", role: "idol", type: "text", text: previewMessage, createdAt: previewMessageAt.toISOString() }],
     },
   });
+}
+
+function bootstrapSnapshotPreview(kind) {
+  bootstrapAppPreview();
+  const member = state.selected || members[0];
+  const realScenarios = new Set(["real-opening", "real-user-reply", "real-contact-request", "real-added-success"]);
+
+  if (realScenarios.has(kind)) {
+    router.start("real-scene");
+    $("realMessages").innerHTML = "";
+    $("realChoices").innerHTML = "";
+    $("realSceneSub").textContent = "Outside JYP · first meeting";
+
+    appendBubble("realMessages", "system", "You are downstairs outside the company. People are leaving the cafe, and the street is still bright from practice room windows.");
+    if (kind === "real-opening") {
+      setChoices("realChoices", [
+        { label: "Same iced Americano", run: () => {} },
+        { label: "Sudden rain", run: () => {} },
+        { label: "Corner collision", run: () => {} },
+      ]);
+      return;
+    }
+
+    appendBubble("realMessages", "idol", "Oh--I am really sorry. I was checking my manager's message and did not notice the name. I have not drunk from it. Let me line up and buy you a new one.");
+    if (kind === "real-user-reply") {
+      appendBubble("realMessages", "user", "It's okay, don't worry. Are you late for practice?");
+      $("realChoices").innerHTML = `
+        <form id="realForm" class="scene-free-input">
+          <input id="realInput" autocomplete="off" placeholder="Reply to him..." />
+          <button type="submit" aria-label="Send"><span aria-hidden="true"></span></button>
+        </form>
+      `;
+      layoutChoiceChat("realMessages", "realChoices");
+      return;
+    }
+
+    appendBubble("realMessages", "user", "It's okay, don't worry. Are you late for practice?");
+    appendBubble("realMessages", "idol", "A little, but that is not an excuse. I should fix this before I go.");
+    appendBubble("realMessages", "user", "Then maybe just go first. I can order again.");
+    appendBubble("realMessages", "idol", "That makes me feel worse. Can we add each other? I want to make it up to you properly next time.");
+    if (kind === "real-contact-request") {
+      setChoices("realChoices", [{ label: "Okay.", run: () => {} }]);
+      return;
+    }
+
+    appendBubble("realMessages", "user", "Okay.");
+    appendBubble("realMessages", "system", `${member.name} has been added to your contacts.`);
+    showToast(`${member.name} has been added`);
+    setChoices("realChoices", [{ label: "Go to Chat", run: () => {} }]);
+    return;
+  }
+
+  router.start("home");
 }
 
 function showToast(text) {
@@ -1854,7 +1912,10 @@ createPageController();
 store.subscribe(renderShell);
 renderMembers();
 initMemberSlider();
-if (shouldStartInAppPreview()) {
+const snapshotPreview = getSnapshotPreview();
+if (snapshotPreview) {
+  bootstrapSnapshotPreview(snapshotPreview);
+} else if (shouldStartInAppPreview()) {
   bootstrapAppPreview();
   router.start("home");
 } else {

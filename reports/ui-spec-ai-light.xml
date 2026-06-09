@@ -1,0 +1,153 @@
+<title>Idol 102 / OPPAYA 轻量 UI 规范</title>
+
+<callout background-color="light-yellow" border-color="yellow">
+  <p><b>这版规范的目标：</b>给 AI 明确审美方向和硬边界，而不是把每个页面、每个组件都写死。开发时优先复用项目里的 <code>src/ui/tokens.css</code>、<code>src/ui/components.css</code> 和现有页面结构；具体布局允许 AI 按场景发挥，但不能偏离下面的气质、配色、字号和可读性规则。</p>
+</callout>
+
+<h1>1. 核心气质</h1>
+<p>产品视觉是 <b>Velvet Backstage</b>：深夜后台、丝绒暗面、玫瑰灯、香槟金信号、慢热关系推进。界面要像用户已经进入故事现场，而不是一个聊天工具或营销落地页。</p>
+<p>辅助气质是 <b>Midnight Fanlight</b>：粉蓝霓虹、应援灯海、梦境闪烁。它只用于稀有事件、梦境异常、边缘光和互动反馈，不做大面积铺色。</p>
+<ul>
+  <li>亲密但克制：甜度不要太高，重点是暧昧、陪伴、关系推进。</li>
+  <li>沉浸优先：人物、场景、对话永远是第一层信息，装饰退后。</li>
+  <li>手机原生：以 390 x 844 移动画布为基准，不做桌面官网感。</li>
+  <li>剧情驱动：按钮、toast、系统提示都要像关系或剧情信号，不像后台日志。</li>
+  <li>轻奢后台感：可使用玻璃、暗影、柔光、票根、宝丽来、通行证语汇。</li>
+</ul>
+
+<h1>2. 颜色</h1>
+<p>新增样式优先使用项目 token，不要临时扩散一套新颜色。</p>
+<table>
+  <thead>
+    <tr><th>用途</th><th>颜色</th><th>使用方式</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>主背景</td><td><code>#08070d</code> / <code>#0c0d15</code> / <code>#141723</code></td><td>替代纯黑，承接夜色和场景图。</td></tr>
+    <tr><td>面板</td><td><code>#171c25</code> / <code>#231f2a</code> / 透明暗玻璃</td><td>卡片、弹层、聊天气泡、选择项。</td></tr>
+    <tr><td>主文字</td><td><code>#fff9ff</code> / <code>#e9dbe4</code></td><td>标题和正文，避免死白刺眼。</td></tr>
+    <tr><td>弱文字</td><td><code>#a99aa8</code> / <code>#6f6572</code></td><td>时间、说明、空态、禁用。</td></tr>
+    <tr><td>主互动</td><td><code>#ff8aae</code> / <code>#c25b84</code></td><td>按钮、选中态、新消息、新记忆。</td></tr>
+    <tr><td>剧情信号</td><td><code>#f6cf8b</code> / <code>#d9aa68</code></td><td>关系阶段、会员、邀请、系统提示。</td></tr>
+    <tr><td>梦境/稀有</td><td><code>#70e7ff</code> / <code>#b897ff</code></td><td>只做点状高亮、异常、梦境边缘光。</td></tr>
+    <tr><td>危险/崩坏</td><td><code>#ff5d78</code></td><td>删除、错误、梦境中断。</td></tr>
+  </tbody>
+</table>
+<p><b>颜色比例：</b>暗底与影像 70%-80%；玻璃面板和暖白材质 15%-20%；玫瑰互动色 5%-8%；香槟金 3%-6%；粉蓝/紫霓虹不超过 3%。</p>
+<p><b>禁止：</b>大面积紫蓝渐变、大面积粉色、纯黑空屏、纯金主题、每个页面都换一套颜色。</p>
+
+<h1>3. 字体与字号</h1>
+<p>字体要有“手机 App 的清晰度”和“剧情文本的情绪”。不要为了氛围牺牲可读性。</p>
+<table>
+  <thead>
+    <tr><th>场景</th><th>字体</th><th>建议字号</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>正文 / UI</td><td>Inter / DM Sans / PingFang SC / system-ui</td><td>13-14px，行高 1.55-1.65</td></tr>
+    <tr><td>剧情叙事 / 旁白</td><td>Noto Serif SC / Songti SC</td><td>15-17px，行高 1.7-1.85</td></tr>
+    <tr><td>页面标题</td><td>Sans 或 Serif 均可</td><td>18-24px</td></tr>
+    <tr><td>角色名 / 关键数字</td><td>Sans Display</td><td>32-40px</td></tr>
+    <tr><td>Splash / 强情绪标题</td><td>Playfair Display / Serif</td><td>40-58px，仅少量使用</td></tr>
+    <tr><td>标签 / 状态</td><td>Sans</td><td>10-12px，可大写，字距 .18em-.24em</td></tr>
+  </tbody>
+</table>
+<ul>
+  <li>正文不要低于 12px；按钮文字通常 13-15px。</li>
+  <li>按钮和标签字重 700-900；正文 400-500。</li>
+  <li>不使用负字距；不要用过大的标题塞进卡片。</li>
+  <li>长文案拆成多条或多段，不要让按钮、导航、卡片标题溢出。</li>
+</ul>
+
+<h1>4. 圆角、玻璃与阴影</h1>
+<p>整体是暗色玻璃与柔光，不是厚重卡片堆叠。</p>
+<ul>
+  <li>常规卡片和选择项：8-12px 圆角为主。</li>
+  <li>输入框、聊天气泡：14-22px。</li>
+  <li>底部导航、Action Sheet、大浮层：18-24px。</li>
+  <li>胶囊标签：999px。</li>
+  <li>描边使用白色 14%-22% 透明度；选中态可用玫瑰描边；系统信号可用香槟金描边。</li>
+  <li>阴影要柔、散、低对比；避免硬投影、浮夸 glow、卡片套卡片。</li>
+</ul>
+
+<h1>5. 布局原则</h1>
+<ul>
+  <li>默认画布：390 x 844。真实手机窄屏可以全屏，桌面预览保留手机外壳。</li>
+  <li>页面左右边距 18-24px；底部导航页面要预留 86-104px。</li>
+  <li>背景图上的文字必须有渐变遮罩、暗玻璃或阴影承托。</li>
+  <li>人物脸、眼睛、关键地点信号不能被标题、按钮、toast、卡片遮住。</li>
+  <li>底部导航、输入栏、Home indicator 不允许互相遮挡。</li>
+  <li>固定格式组件要有稳定尺寸，状态变化不能让布局跳动。</li>
+</ul>
+
+<h1>6. 组件方向</h1>
+<p>AI 可以自由组合组件，但必须优先复用以下已有风格。</p>
+<table>
+  <thead>
+    <tr><th>组件</th><th>视觉方向</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>主按钮</td><td>玫瑰渐变，深色文字，最小高 48px，圆角 12-14px，轻 glow。禁用态保持尺寸。</td></tr>
+    <tr><td>次按钮</td><td>暗玻璃，不使用金色实底；用于取消、返回、弱操作。</td></tr>
+    <tr><td>图标按钮</td><td>42px 或 48px 正圆，使用熟悉图标，不用 emoji 做核心工具图标。</td></tr>
+    <tr><td>输入框</td><td>白色 7%-8% 透明底，聚焦时玫瑰描边和浅 glow；文本不能被发送按钮挤压。</td></tr>
+    <tr><td>Toast</td><td>底部导航上方，270px 到全宽减 48px，13px，一句话，不超过 32 个中文字符。</td></tr>
+    <tr><td>Modal / Sheet</td><td>黑色 52%-58% scrim，blur 8-10px；主操作玫瑰，取消暗玻璃，危险操作只改文字色。</td></tr>
+    <tr><td>聊天气泡</td><td>角色左侧暗玻璃，用户右侧玫瑰渐变，系统居中金色弱提示；旁白透明居中斜体。</td></tr>
+    <tr><td>宝丽来记忆</td><td>暖白纸张、深棕文字、轻微旋转；编辑态取消旋转。</td></tr>
+    <tr><td>底部导航</td><td>左右 24px，底部 20px，高约 64px，四等分；激活态玫瑰/金色轻高亮，不改变尺寸。</td></tr>
+  </tbody>
+</table>
+
+<h1>7. 页面自由度</h1>
+<p>不要把页面模板写死。AI 只需要遵守以下边界：</p>
+<ul>
+  <li>Splash：第一屏直接进入体验或登录，不做营销式 hero 和长介绍。</li>
+  <li>成员选择：人物大图是主视觉，标题和 CTA 避开脸部，底部信息必须可读。</li>
+  <li>Home：全屏人物海报优先，UI 像叠在故事现场上的轻层，不要做普通 dashboard。</li>
+  <li>Chat / Scene：信息密度可以更工具化，但仍保持暗玻璃、关系信号和场景感。</li>
+  <li>Me：可以安静、清晰、设置页感更强，不需要强剧情化。</li>
+  <li>梦境/异常：可使用 scanline、flicker、glitch，但持续短、可读、不能让用户操作迷失。</li>
+</ul>
+
+<h1>8. 图片与素材</h1>
+<ul>
+  <li>页面必须有真实人物、场景、记忆或明确物件支撑，不要只用渐变和装饰图形。</li>
+  <li>人物图使用 <code>object-fit: cover</code>，优先保脸、眼睛、上半身。</li>
+  <li>场景图要有可识别地点信号，比如公司门口、便利店、练习室、咖啡店。</li>
+  <li>允许轻 grain、scanline、柔光星点、宝丽来纸张质感。</li>
+  <li>禁止无意义装饰圆球、过度模糊 stock 背景、影响阅读的强纹理。</li>
+</ul>
+
+<h1>9. 动效</h1>
+<ul>
+  <li>快速交互约 .18s；常规状态变化约 .28s；强情绪转场约 .52s。</li>
+  <li>点击态可以轻微 <code>translateY(1px) scale(.985)</code>。</li>
+  <li>进入动画用轻微 fade up；聊天气泡轻微上移和 scale。</li>
+  <li>动效不能造成文字遮挡、布局位移、长时间闪烁。</li>
+  <li>关键操作必须在 300ms 内给出反馈。</li>
+</ul>
+
+<h1>10. 文案</h1>
+<ul>
+  <li>英文适合按钮、模式、状态；中文适合剧情、旁白、解释。不要在同一颗按钮里混用中英。</li>
+  <li>导航英文 1 个词；中文不超过 2-3 字。</li>
+  <li>主按钮中文不超过 8 字，英文不超过 22 字符。</li>
+  <li>成功提示要像关系推进；普通错误要温和；梦境异常可以技术化。</li>
+  <li>系统提示只说必要信息，不写长说明。</li>
+</ul>
+
+<h1>11. AI 生成时的判断标准</h1>
+<callout background-color="light-blue" border-color="blue">
+  <p><b>允许 AI 发挥：</b>构图、局部组件组合、页面叙事节奏、氛围细节、不同场景的轻重变化。</p>
+  <p><b>不允许 AI 发挥：</b>品牌色大偏移、字体层级失控、文字不可读、人物脸被遮挡、组件尺寸跳动、做成营销页、做成普通聊天工具、重新发明一套按钮/输入框/卡片体系。</p>
+</callout>
+
+<h1>12. 快速验收清单</h1>
+<checkbox done="false">是否在 390 x 844 画布下验证过。</checkbox>
+<checkbox done="false">是否复用了 <code>tokens.css</code> 的颜色、字号、圆角和动效。</checkbox>
+<checkbox done="false">是否有真实人物/场景/记忆视觉资产，而不是纯渐变空屏。</checkbox>
+<checkbox done="false">主要 CTA 是否清楚、短、不会溢出。</checkbox>
+<checkbox done="false">背景图上的文本是否有遮罩或玻璃承托。</checkbox>
+<checkbox done="false">底部导航、输入栏、Home indicator 是否互不遮挡。</checkbox>
+<checkbox done="false">触摸目标是否不小于 40 x 40px。</checkbox>
+<checkbox done="false">错误、空态、禁用态是否存在。</checkbox>
+<checkbox done="false">整体是否仍然是 Velvet Backstage，而不是霓虹营销页或普通聊天工具。</checkbox>
