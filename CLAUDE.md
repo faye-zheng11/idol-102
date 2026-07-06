@@ -16,12 +16,16 @@
 | --- | --- |
 | "我来了" / "到哪了" / "现在干嘛" / "接着上次" | 读 `STATE.md`，报 portfolio，问推哪个（= `/pm`） |
 | "我有个想法…" / "想做个…" / "要不要做 X" | 开新 bet → 先召集智囊团过一遍 → 进 P0 |
-| "这个靠谱吗" / "帮我想想" / "我不确定" / "拿不准" | 召集智囊团（= `/think`） |
+| "自动帮我跑" / "少操心，到关键点问我就行" / "一路跑到底" | 开**自动驾驶**（`playbooks/auto-run.md`，= `/auto`）：驱动全程，只在闸口弹卡确认 |
+| "这个靠谱吗" / "帮我想想" / "我不确定" / "拿不准" | 召集智囊团（商业，= `/think`） |
+| "从体验看好不好" / "像不像真关系" / "这段对话/界面行不行" | 召集用户体验团（体验，= `/ux`） |
+| "这界面好不好看" / "交互顺不顺" / "前端/后端做不做得出来" / "帮我审下这个设计" | 召集设计与技术团（落地，= `/design`） |
 | "哪个先做" / "排个序" / "顾不过来" | 智囊团排序官（`prioritization-advisor`） |
 | "这个怎么验" / "能不能测出来" / "怎么找信号" | 进 P2，用 `pol-probe-advisor` 选最便宜探针 |
 | "定了" / "记下来" / "往下走" / "下一步" | 落当前阶段产物、更新 `STATE.md`、进下一阶段 |
 | "数据怎么样" / "上线两周了" / "该复盘了" | 进 P4 Signal Review，用 `oppa-analyze` 取数据，产出落 `workbench/data/` |
 | "角色为什么这样回" / "这段体感不对" / "语气/记忆有问题" | 读 `prompts/`（后端真实运行的提示语）来分析；要改进就开 bet 走 P0 |
+| "帮我去抓/找找" / "GitHub 有什么能用的" / "最新产品思维" / "各模型有啥变动/怎么选" | 开**雷达**（`playbooks/radar.md`，= `/radar`）：联网抓工具/情报/模型变动，落 `workbench/radar/` |
 | "给团队看" / "演示一下" | 打开 / 更新 `demo/`（见 `STRUCTURE.md`） |
 | "要交给开发了" / "该落地了" | 整理 `docs/` PRD；需要时导出 BMAD handoff（见下） |
 | "X 版本 OK / 封版 / 定稿了" | 执行**封版仪式**（见下），把当时 docs+演示+数据冻进 `releases/vX/` |
@@ -56,7 +60,10 @@
 - **每个阶段只有一个产物文件**（见 `workbench/WORKFLOW.md`）。产物没写完 = 阶段没完成 = 该 bet 不进下一阶段。
 - **Bet Brief 是硬门槛，但只对单个 bet**：某 bet 的 `01-bet-brief.md` 六问没全部填完，只挡它自己进 P3 Build，不影响其他 bet。填不出来的问题，就是最该去 P2 验证的地方。
 - **PMF 导向**：P2 用 `pol-probe-advisor` 选最便宜的探针找信号；不怕失败——无信号也是有效产出，可能直接触发 stop/pivot。
-- **智囊团**：每个新 bet 的 P0 强制召集一次（`playbooks/think-tank.md`）；用户任何时候不确定或要给并行 bet 排序，用 `/think`。
+- **三支参谋队伍**（按阶段）：
+  - P0 想法：**智囊团**（商业/PMF，`playbooks/think-tank.md`，`/think`）+ **用户体验团**（体验/情感，`playbooks/ux-panel.md`，`/ux`）——每个新 bet 强制各过一次。
+  - P3 写 PRD/设计原型：**设计与技术团**（UI 审美/UX 交互/前后端可行性，`playbooks/design-tech-panel.md`，`/design`）。
+  - 任何时候不确定都可单独召集：拿不准生意 `/think`、拿不准体验 `/ux`、拿不准设计或做不做得出来 `/design`。
 - **Signal Review 必须出决定**：P4 结论只能是 continue / stop / pivot / 缩 scope，禁止"再观察一下"。
 
 ## 沉淀与推进
@@ -88,6 +95,9 @@
 
 ## 快捷入口（可选，用户不用记）
 
-这两个只是加速用的，用户说人话你也要能接（见顶部路由表）：
+这几个只是加速用的，用户说人话你也要能接（见顶部路由表）：
 - `/pm` = 报 portfolio 并继续。
-- `/think` = 召集智囊团（`playbooks/think-tank.md`）。
+- `/auto` = 自动驾驶跑一个 bet（`playbooks/auto-run.md`），只在闸口弹卡确认。
+- `/think` = 召集智囊团（商业，`playbooks/think-tank.md`）。
+- `/ux` = 召集用户体验团（体验/情感，`playbooks/ux-panel.md`）。
+- `/design` = 召集设计与技术团（UI/UX/前后端可行性，`playbooks/design-tech-panel.md`）。

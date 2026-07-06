@@ -11,6 +11,12 @@
 - 从 Bet Brief ③（要看到的行为）反推：**要观察到这个行为，最少要做什么？**
 - 其他一律砍（Jobs：加进去的东西是让核心更纯粹还是更复杂？）。
 
+## 写 PRD / 设计原型交互时：过设计与技术团
+
+这一步落到具体界面和交互时，召集**设计与技术团**（`playbooks/design-tech-panel.md`，`/design`）过一遍：
+- 🎨 UI 审美（`arrange`/`colorize`/`typeset`）· 🧭 UX 交互（`animate`/`critique`）· 🖥️ 前端可行性（`frontend-design`/`adapt`/`harden`）· ⚙️ 后端可行性（`docs/BACKEND_STORIES.md`+`handoff/07`）· 🔍 评审官（`critique`/`audit`）。
+- 目的：设计好不好看、好不好用、前后端做不做得出来——在写进 PRD/原型前先挑出短板和技术风险。
+
 ## 落地去向（别混区）
 
 - 交互原型改动 → 根目录原型源码（`index.html` / `app.js` / `src/`）。
