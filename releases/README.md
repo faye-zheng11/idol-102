@@ -9,25 +9,28 @@
 releases/
   v1.0/
     RELEASE.md      这版是什么、你拍板的决定、日期
+    prototype/      冻结的整份可跑原型（index.html/app.js/src/styles.css/assets… 当时的样子）
     docs/           冻结的正式 PRD（当时交付给开发的版本）
-    demo/           冻结的演示壳代码（+ screens/ 可选关键页面截图）
+    demo/           冻结的演示壳代码（iframe 指向本目录 prototype/；+ screens/ 可选关键页面截图）
     data/           冻结的关键指标（支撑这版决策/结果的数据）
   v1.1/
     ...
 ```
-> 原型/源码不复制进来——它是活代码，用 `git tag v1.0` 冻结即可，日后 `git checkout v1.0` 就能看到当版原型。
+> **原型不用拼接**：活的原型永远只有根目录一份（=最新版）。做 2.0 就直接在根目录改，1.0 的样子已完整冻在 `releases/v1.0/prototype/`。想对比就「releases/v1.0/prototype」对「根目录」，两份各自能单独跑。
+> 同时也打 `git tag v1.0` 双保险（git 层面的版本机）。
 
 ## 封版仪式（你说 OK 就触发）
 
 你说「**1.0 版本 OK，封版**」（或类似的话），AI 就：
 
 1. 建 `releases/v1.0/`。
-2. 复制当前 `docs/` → `releases/v1.0/docs/`（冻结正式 PRD）。
-3. 复制当前 `demo/` 演示壳代码 → `releases/v1.0/demo/`；如需静态可看版，给运行中的 demo 截几张关键页面图放 `demo/screens/`。
-4. 复制 `workbench/data/` 里这版相关的关键指标 → `releases/v1.0/data/`。
-5. 写 `RELEASE.md`：这版做了什么、你拍板的决定、日期。
-6. 提醒你打 `git tag v1.0`（冻结原型/全仓当时状态）。
-7. 之后这个目录**只读不改**；活区（root 原型 / docs / demo / workbench）继续迭代下一版。
+2. 复制当前**整份原型**（`index.html` `app.js` `shell.js` `styles.css` `src/` `assets/` `server.js` `package.json`）→ `releases/v1.0/prototype/`（这就是 1.0 原型的永久样子，能单独跑）。
+3. 复制当前 `docs/` → `releases/v1.0/docs/`（冻结正式 PRD）。
+4. 复制当前 `demo/` → `releases/v1.0/demo/`，并把它的 iframe 改指向 `../prototype/`（让这版 demo 展示的是 1.0 原型，不是最新的）；如需静态版，截几张关键页面图放 `demo/screens/`。
+5. 复制 `workbench/data/` 里这版相关的关键指标 → `releases/v1.0/data/`。
+6. 写 `RELEASE.md`：这版做了什么、你拍板的决定、日期。
+7. 打 `git tag v1.0`（双保险）。
+8. 之后这个目录**只读不改**；活区（root 原型 / docs / demo / workbench）继续迭代下一版。
 
 ## 约定
 

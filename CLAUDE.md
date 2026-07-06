@@ -68,13 +68,14 @@
 
 ## 封版：把一个版本冻起来（`releases/`）
 
-用户拍板某版本 OK（"1.0 封版 / 定稿"）时，按 `releases/README.md` 的仪式：
+用户拍板某版本 OK（"1.0 封版 / 定稿"）时，按 `releases/README.md` 的仪式。核心：**原型不用拼接——活的原型永远只有根目录一份（=最新版），封版时把当时整份复制冻进 releases**：
 1. 建 `releases/v<X>/`。
-2. **复制**（不是移动）当前：`docs/` → `releases/v<X>/docs/`（正式 PRD）；`demo/`（演示壳代码）→ `releases/v<X>/demo/`；`workbench/data/` 里这版相关指标 → `releases/v<X>/data/`。
-3. 演示要留静态可看版：给运行中的 demo 截几张关键页面图，放 `releases/v<X>/demo/screens/`（可选，问用户要不要）。
-4. 写 `releases/v<X>/RELEASE.md`：这版做了什么、用户拍板的决定、日期。
-5. **原型/源码**用 git tag 冻结（`git tag v<X>`），不复制进 releases——它是活代码，git 就是它的版本机。
-6. 该目录之后**只读不改**；活区（root 原型 / docs / demo / workbench）继续迭代。
+2. **复制**（不是移动）当前**整份原型**（`index.html` `app.js` `shell.js` `styles.css` `src/` `assets/` `server.js` `package.json`）→ `releases/v<X>/prototype/`（能单独跑的 1.0 原型）。
+3. 复制 `docs/` → `releases/v<X>/docs/`（正式 PRD）；`workbench/data/` 里这版指标 → `releases/v<X>/data/`。
+4. 复制 `demo/` → `releases/v<X>/demo/`，把 iframe 改指向 `../prototype/`（这版 demo 展示当版原型）；可选截关键页面图放 `demo/screens/`。
+5. 写 `releases/v<X>/RELEASE.md`：这版做了什么、用户拍板的决定、日期。
+6. 打 `git tag v<X>` 双保险。
+7. 该目录之后**只读不改**；活区（root 原型 / docs / demo / workbench）继续迭代下一版——2.0 直接在根目录改，不碰 releases。
 
 讨论/工作台**不封版**——它是活区，可迁移学习已在 `workbench/LEARNINGS.md` 跨版本累积。
 
