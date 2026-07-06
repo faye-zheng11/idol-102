@@ -23,6 +23,17 @@
 - 为了观察 Brief ③ 的行为，埋了什么可观测点（数据/事件）。
 - 明确上线日期，用来倒推 P4 的第 14 天。
 
+## 交给开发（handoff）——要真上线时才做
+
+想清楚要落地给开发时，用 `workbench/playbooks/handoff/` 里的模板产出，放进本 bet 目录：
+
+1. **前端 Story**（`handoff/06-frontend-stories.md`）：显示、跳转、交互、状态。
+2. **后端 Story**（`handoff/07-backend-stories.md`）：业务逻辑、状态机、数据、API、边界。参考已有的 `docs/BACKEND_STORIES.md`。
+3. **埋点审计**（`handoff/08-tracking-audit.md`）：⭐ 关键——**先写本次要回答的 PMF 问题，再检查埋点够不够回答它**。对照 `docs/tracking/`（events/parameters/user_properties）。埋点埋不到 = P2/P4 找不到信号，等于白做。
+4. **Demo 脚本**（`handoff/09-demo-script.md`）：给团队演示的走查脚本。
+
+> 开发用 BMAD 的话，这些 Story 正好是它 `story→dev` 阶段的输入（见 `SETUP.md` 末尾的 handoff 说明）。
+
 ## 出口
 
-有一个能被真实用户使用、且能观察到目标行为的版本。更新 `STATE.md` → 等到上线第 14 天进 P4。
+有一个能被真实用户使用、且能观察到目标行为的版本；要上线的话 handoff 四件（前端/后端 story + 埋点审计 + demo 脚本）齐了。更新 `STATE.md` → 等到上线第 14 天进 P4。

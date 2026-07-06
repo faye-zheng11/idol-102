@@ -11,7 +11,7 @@
 | **P0** | 想法讨论 | build 前 | 智囊团必过一次 + 参谋团 5 问逼诚实 + OST 确认没乱做 + AI bet 评估 | 智囊团 / `opportunity-solution-tree` / `recommendation-canvas` / `positioning-workshop` / `company-research` | `00-think.md` | 智囊团过了、5 问诚实、有一张 OST |
 | **P1** | Bet Brief | build 前 | 填六问，把"在测什么"写成可证伪的一句话 | `epic-hypothesis` / `problem-statement` | `01-bet-brief.md` | 六问**全部**填完（否则回 P2 验证） |
 | **P2** | 验证 / 找信号 | build 前 | 选最便宜的探针逼真相；访谈是其中一种探针 | `pol-probe-advisor` / `pol-probe` / `discovery-interview-prep` | `02-validation.md` | 探针跑完出结论：有信号/无信号/换探针 |
-| **P3** | Build | 有信号才做 | 做原型 / 接开发（对应根目录原型 + `demo/`） | `run` / `verify` | `03-build.md` | 可演示、能观察到目标行为的版本 |
+| **P3** | Build | 有信号才做 | 做原型 / 接开发；要上线就出 handoff（前后端 story + 埋点审计 + demo 脚本） | `run` / `verify` / `playbooks/handoff/` | `03-build.md` | 可演示、能观察到目标行为的版本；上线则 handoff 齐 |
 | **P4** | Signal Review | 上线第 14 天 | 拿 Brief 看行为数据，做决定 | `oppa-analyze` / `business-health-diagnostic` | `04-signal-review.md` | 出一个决定：continue/stop/pivot/缩 scope |
 | **P5** | 可迁移学习 | Signal Review 后 | 写 1–3 条对下一个产品有用的结论 | — | `05-learnings.md` + 追加 `LEARNINGS.md` | 结论进复利库 |
 

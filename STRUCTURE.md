@@ -9,10 +9,10 @@
 | 区 | 目录 | 用途 | 谁看 |
 | --- | --- | --- | --- |
 | 🧩 **原型/源码** | 根目录 `index.html` / `app.js` / `src/` / `server.js` / `assets/` / `styles.css` | 能跑的手机原型，接真实对话 API。开发最终参考、喂 AI 的源码 | 开发 / AI |
-| 📄 **文档** | `docs/` | 项目级总 PRD + 各模块业务 PRD；`_setup/` 放配置截图 | 全员 |
+| 📄 **文档** | `docs/` | 项目级总 PRD + 各模块业务 PRD；`BACKEND_STORIES.md` 后端 story；`tracking/` 埋点表；`_setup/` 配置截图 | 全员 / 开发 |
 | 🎬 **演示** | `demo/` | 给团队/开发看的实时演示壳：左内嵌可操作原型，右随页面显示业务说明，顶挂版本文档 | 团队 / 开发 |
 | 📊 **数据** | `workbench/data/` | 数据分析产出（oppa-analyze/BI 结果、指标）；P4 从这取数 | PM |
-| 💭 **讨论 & 工作** | `workbench/`（`bets/` `playbooks/` `references/` `drafts/` `STATE.md` `WORKFLOW.md` `LEARNINGS.md`） | PM 跑流程（P0→P5）的地方，入口 `/pm`；讨论都在 bets | PM |
+| 💭 **讨论 & 工作** | `workbench/`（`bets/` `playbooks/`（含 `handoff/` 交给开发的模板）`references/` `drafts/` `STATE.md` `WORKFLOW.md` `LEARNINGS.md`） | PM 跑流程（P0→P5）的地方，入口 `/pm`；讨论都在 bets | PM |
 
 ## 封存区（冻结的版本）
 
@@ -48,3 +48,4 @@ npm start
 - 删除了 `reports/figma/reports/` 与 `reports/figma/reports 2/` 两个误拷贝的嵌套重复目录。
 - 分区整理（2026-07-06）：`reports/ui-spec-ai-light.xml` → `docs/`；根目录 8 个 `lark_*.png` → `docs/_setup/`；新建 `workbench/data/`（数据区）与 `releases/`（封存区）；清掉空壳 `workbench/analysis`、`workbench/skill-outputs`。
 - 删除 figma 静态快照（`reports/figma` 那批 41 张 PNG + 沟通板 + zip，约 3.9MB）：已被实时演示壳 `demo/` 取代，冗余。
+- 合并 Codex 的 `pm/` 工作台（2026-07-06）：本项目并成一套 markdown 工作流；吸收了 `docs/BACKEND_STORIES.md`、`docs/tracking/`（埋点表）、`workbench/playbooks/handoff/`（前后端 story + 埋点审计 + demo 脚本模板）。Codex 原 `pm/` 代码版（含 in-app 标注）完整存档在 `codex-pm-workbench` 分支，需要时可取回。

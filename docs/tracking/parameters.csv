@@ -1,0 +1,72 @@
+﻿Parameter Name,type,Description,Value,Last version,需求备注,Event,采集端,参数口径,AI执行说明
+active_scene_id,String,Active Scene ID,为空表示无,v1.0.0,,Chat Message Sent,BE,Active Scene ID。取值边界：为空表示无。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+app_state,String,App 状态,foreground / background / killed,v1.0.0,,Voice Call Event,FE,App 状态。取值边界：foreground / background / killed。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+app_version,String,App 版本,v1.0.0,v1.0.0,,App Launch,Common,App 版本。取值边界：v1.0.0。作为通用上下文，随核心事件携带或由服务端补齐。,通用上下文参数，注意脱敏和枚举一致；不要上传手机号、邮箱等明文个人信息。
+audio_duration_ms,Number,音频时长,毫秒,v1.0.0,,Chat Voice Played,FE,音频时长。取值边界：毫秒。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+call_id,String,来电 ID,,v1.0.0,,Voice Call Event,BE,来电 ID。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+character_id,String,角色 ID,如 bang_chan / felix / server character id,v1.0.0,,"OB Character Confirmed,OB First Scene Message Sent,OB First Scene Completed,Home Page Viewed,Moment Opened,Moment Edit Saved,Chat Detail Opened,Chat Message Sent,Chat Voice Played,Voice Call Event,Discover Member Requested,Scene Invite Sent,Active Scene Entered,Scene Message Sent,Scene Completed,Character Profile Updated,Scene Character Selected,Scene Exit Hook Shown,OB Dream Completed",Hybrid,角色 ID。取值边界：如 bang_chan / felix / server character id。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+character_name,String,角色展示名/昵称,如 Bang Chan,v1.0.0,,"OB Character Confirmed,Discover Member Requested,Scene Invite Sent,Active Scene Entered,Scene Completed,Scene Message Sent,OB First Scene Completed,Scene Character Selected,Scene Exit Hook Shown,OB Dream Completed",Hybrid,角色展示名/昵称。取值边界：如 Bang Chan。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+chat_unread_created,Boolean,是否已生成 Chat 未读,true / false,v1.0.0,,,BE,是否已生成 Chat 未读。取值边界：true / false。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+created_by,String,创建方,user / character / system,v1.0.0,,,BE,创建方。取值边界：user / character / system。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+day_since_met,Number,相识天数,Day N,v1.0.0,,Home Page Viewed,Common,相识天数。取值边界：Day N。作为通用上下文，随核心事件携带或由服务端补齐。,通用上下文参数，注意脱敏和枚举一致；不要上传手机号、邮箱等明文个人信息。
+default_language,String,默认语言,en / zh / de,v1.0.0,,App Launch,Common,默认语言。取值边界：en / zh / de。作为通用上下文，随核心事件携带或由服务端补齐。,通用上下文参数，注意脱敏和枚举一致；不要上传手机号、邮箱等明文个人信息。
+duration_ms,Number,耗时毫秒,整数,v1.0.0,,"Login Result,Voice Call Event",BE,耗时毫秒。取值边界：整数。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+edit_type,String,编辑类型,image / text,v1.0.0,,Moment Edit Saved,FE,编辑类型。取值边界：image / text。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+entry_source,String,用户进入页面或 active scene 的来源。Scene 场景下用于区分 Go Now 进入、恢复正在进行中的 scene 等。,tab / card / route / go_now / restore,v1.0.0,1.0 Scene PMF 补充,"Home Page Viewed,Moment Opened,Chat Detail Opened,Active Scene Entered",FE,Scene 中 go_now=发送邀请成功后确认进入；restore=重新打开 app 或从拦截弹窗返回正在进行中的 scene。其它页面可继续沿用原有 tab/card/route 口径。,Active Scene Entered 建议传，用来分析发送成功后真实进入率和次日回访后的行为。
+error_area,String,异常区域,login / ob / chat / scene / home,v1.0.0,,,Hybrid,异常区域。取值边界：login / ob / chat / scene / home。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+error_code,String,错误码,,v1.0.0,,"Login Result,Character Profile Updated",Hybrid,错误码。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+error_message,String,错误信息,需脱敏,v1.0.0,,,Hybrid,错误信息仅用于排查，必须脱敏，避免包含用户输入、手机号、邮箱、token 或完整请求体。,可以优先上报 error_code/error_area；如上报 error_message，必须脱敏并限制长度。
+event_id,String,用户选择或进入 Scene 时对应的事件 ID。,event 的稳定标识,v1.0.0,1.0 Scene PMF 补充；不传 event_name。,"Scene Invite Sent,Active Scene Entered,Scene Message Sent,Scene Completed,Scene Event Selected,Scene Character Selected,Scene Exit Hook Shown",FE,只上报 event_id，不上报 event_name。event_id 需能在配置表或 BI 维表中映射成人可读事件名称。,Scene PMF 漏斗核心参数；用于分析 location-event 组合表现。
+event_type,String,来电事件类型,ringing / accept / reject / missed / ended,v1.0.0,,Voice Call Event,Hybrid,来电事件类型。取值边界：ringing / accept / reject / missed / ended。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+expires_at,DateTime,过期时间,YYYY-MM-DD HH:mm:ss,v1.0.0,,,BE,过期时间。取值边界：YYYY-MM-DD HH:mm:ss。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+friend_created,Boolean,是否已创建好友关系,true / false,v1.0.0,,OB First Scene Completed,BE,是否已创建好友关系。取值边界：true / false。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+has_active_scene,Boolean,是否存在 Active Scene,true / false,v1.0.0,,Route Decision,Hybrid,是否存在 Active Scene。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+has_image,Boolean,是否带图片,true / false,v1.0.0,,Chat Message Sent,FE,是否带图片。取值边界：true / false。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+has_snapshot,Boolean,是否有聊天快照,true / false,v1.0.0,,Moment Opened,Hybrid,是否有聊天快照。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+has_unread_chat,Boolean,是否有未读 Chat,true / false,v1.0.0,,Home Page Viewed,Hybrid,是否有未读 Chat。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+input_type,String,输入类型,text / image_text,v1.0.0,,OB First Scene Message Sent,FE,输入类型。取值边界：text / image_text。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+invite_id,String,邀请 ID,,v1.0.0,,,BE,邀请 ID。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+is_active_scene_locked,Boolean,该角色 Chat 是否被 Active Scene 锁定,true / false,v1.0.0,,Chat Detail Opened,Hybrid,该角色 Chat 是否被 Active Scene 锁定。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+is_new_user,Boolean,是否新用户,true / false,v1.0.0,,Login Result,Common,是否新用户。取值边界：true / false。作为通用上下文，随核心事件携带或由服务端补齐。,通用上下文参数，注意脱敏和枚举一致；不要上传手机号、邮箱等明文个人信息。
+last_message_type,String,最后一条消息类型,text / voice / call / scene_card,v1.0.0,,Chat Detail Opened,Hybrid,最后一条消息类型。取值边界：text / voice / call / scene_card。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+latency_ms,Number,接口或回复耗时,毫秒,v1.0.0,,,BE,接口或回复耗时。取值边界：毫秒。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+launch_type,String,启动类型,cold / warm / foreground,v1.0.0,,App Launch,FE,启动类型。取值边界：cold / warm / foreground。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+login_method,String,登录方式,google / apple / email,v1.0.0,,Login Result,Common,登录方式。取值边界：google / apple / email。作为通用上下文，随核心事件携带或由服务端补齐。,通用上下文参数，注意脱敏和枚举一致；不要上传手机号、邮箱等明文个人信息。
+login_state,String,登录状态,none / valid / expired,v1.0.0,,"App Launch,Route Decision",Common,登录状态。取值边界：none / valid / expired。作为通用上下文，随核心事件携带或由服务端补齐。,通用上下文参数，注意脱敏和枚举一致；不要上传手机号、邮箱等明文个人信息。
+message_id,String,消息 ID,,v1.0.0,,Chat Voice Played,BE,消息 ID。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+message_length,Number,消息长度,字符数,v1.0.0,,"OB First Scene Message Sent,Chat Message Sent,Scene Message Sent",FE,消息长度。取值边界：字符数。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+message_type,String,消息类型,text / image_text / voice / scene_card,v1.0.0,,Chat Message Sent,Hybrid,消息类型。取值边界：text / image_text / voice / scene_card。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+moment_count,Number,当前角色 Moment 数量,整数,v1.0.0,,Home Page Viewed,Hybrid,当前角色 Moment 数量。取值边界：整数。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+moment_created,Boolean,是否已生成 Moment,true / false,v1.0.0,,,BE,是否已生成 Moment。取值边界：true / false。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+moment_date,DateTime,Moment 日期,YYYY-MM-DD,v1.0.0,,Moment Opened,Hybrid,Moment 日期。取值边界：YYYY-MM-DD。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+moment_id,String,Moment ID,,v1.0.0,,"Moment Opened,Moment Edit Saved",BE,Moment ID。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+moment_ready,Boolean,Moment 是否可生成,true / false,v1.0.0,,,Hybrid,Moment 是否可生成。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+next_route,String,登录后路由,OB / Home,v1.0.0,,Login Result,Hybrid,登录后路由。取值边界：OB / Home。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+ob_stage,String,OB 当前阶段,character_select / dream / first_scene / completed,v1.0.0,,OB Character Confirmed,Hybrid,OB 当前阶段。取值边界：character_select / dream / first_scene / completed。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+ob_status,String,OB 状态,not_started / in_progress / completed,v1.0.0,,"App Launch,Route Decision",Hybrid,OB 状态。取值边界：not_started / in_progress / completed。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+place_id,String,地点 ID,company / coffee_shop / park,v1.0.0,,,FE,地点 ID。取值边界：company / coffee_shop / park。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+play_result,String,播放结果,success / fail,v1.0.0,,Chat Voice Played,FE,播放结果。取值边界：success / fail。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+previous_character_id,String,切换前角色 ID,为空表示首次选择,v1.0.0,,OB Character Confirmed,FE,切换前角色 ID。取值边界：为空表示首次选择。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+rank_index,Number,角色在候选列表中的位置,从 1 开始,v1.0.0,,OB Character Confirmed,FE,角色在候选列表中的位置。取值边界：从 1 开始。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+reason,String,路由原因,login_expired / ob_not_completed / active_scene,v1.0.0,,Route Decision,Hybrid,路由原因。取值边界：login_expired / ob_not_completed / active_scene。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+recoverable,Boolean,是否可恢复,true / false,v1.0.0,,,Hybrid,是否可恢复。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+reply_pending,Boolean,是否等待角色回复,true / false,v1.0.0,,Chat Message Sent,Hybrid,是否等待角色回复。取值边界：true / false。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+reply_type,String,回复类型,text / voice / call,v1.0.0,,,BE,回复类型。取值边界：text / voice / call。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+request_result,String,请求结果,success / fail / pending,v1.0.0,,Discover Member Requested,BE,请求结果。取值边界：success / fail / pending。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+result,String,结果,success / fail / cancel / timeout,v1.0.0,,Login Result,Hybrid,结果。取值边界：success / fail / cancel / timeout。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+retry_available,Boolean,是否展示重试入口,true / false,v1.0.0,,,FE,是否展示重试入口。取值边界：true / false。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+route,String,当前路由,,v1.0.0,,,FE,当前路由。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+scene_id,String,Scene 或 OB 小剧场 ID,如 ob_first_scene_company_v1,v1.0.0,,"OB First Scene Message Sent,Moment Opened,Active Scene Entered,Scene Message Sent,Scene Completed,Scene Exit Hook Shown,Scene Exit Hook Responded",Hybrid,Scene 或 OB 小剧场 ID。取值边界：如 ob_first_scene_company_v1。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+source,String,来源,home / chat / scene,v1.0.0,,"Moment Edit Saved,Discover Member Requested,Scene Entry Clicked",FE,来源。取值边界：home / chat / scene。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实来源；1.0 没有 Push，不要上报 push。
+source_page,String,来源页面,chat_settings / home / me,v1.0.0,,Character Profile Updated,FE,来源页面。取值边界：chat_settings / home / me。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+success,Boolean,操作是否成功,true / false,v1.0.0,,Character Profile Updated,BE,操作是否成功。取值边界：true / false。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+target_route,String,目标路由,OB / Home / Chat / Scene,v1.0.0,,Route Decision,FE,目标路由。取值边界：OB / Home / Chat / Scene。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+token_valid,Boolean,登录 token 是否有效,true / false,v1.0.0,,App Launch,BE,登录 token 是否有效。取值边界：true / false。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+total_turns,Number,总对话轮次,整数,v1.0.0,,Scene Completed,BE,总对话轮次。取值边界：整数。以服务端状态/日志为准。,后端权威参数，前端不要猜测或伪造；AI 实现时应从接口返回/服务端状态取得。
+trigger_source,String,触发来源,user_keyword / high_emotion / system / role,v1.0.0,,Voice Call Event,Hybrid,触发来源。取值边界：user_keyword / high_emotion / system / role。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+turn_index,Number,对话轮次,从 1 开始,v1.0.0,,"OB First Scene Message Sent,Scene Message Sent,Scene Exit Hook Shown,Scene Exit Hook Responded",FE,对话轮次。取值边界：从 1 开始。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+unread_count_before,Number,进入前未读数,整数,v1.0.0,,Chat Detail Opened,FE,进入前未读数。取值边界：整数。以前端真实用户行为或客户端状态为准。,前端参数，只记录真实曝光/点击/播放/输入状态；不要从文案或预加载推断。
+update_type,String,更新类型,nickname / avatar / chat_background / home_poster / user_avatar / user_cover / user_name,v1.0.0,,Character Profile Updated,Hybrid,更新类型。取值边界：nickname / avatar / chat_background / home_poster / user_avatar / user_cover / user_name。前端可上报，核心成功/状态口径需以后端确认为准。,不要把参数当成独立事件；只在关联核心事件需要解释指标时携带。
+location_id,String,用户选择或进入 Scene 时对应的地点 ID。,location 的稳定标识,v1.0.0,1.0 Scene PMF 补充；不传 location_name。,"Scene Invite Sent,Active Scene Entered,Scene Completed,Scene Message Sent,Scene Location Selected,Scene Event Selected,Scene Character Selected,Scene Exit Hook Shown",FE,只上报 location_id，不上报 location_name。location_id 需能在配置表或 BI 维表中映射成人可读地点名称。,Scene PMF 漏斗核心参数；location/event 均用稳定 ID 归因。
+completion_reason,String,当前 active scene 被结束的原因。,manual_exit / exit_hook_leave / expired_24h / switch_scene_exit,v1.0.0,1.0 Scene PMF 补充,Scene Completed,Hybrid,manual_exit=用户主动点右上角退出；exit_hook_leave=离场钩子选择离开；expired_24h=24h 到期自动结束；switch_scene_exit=有进行中的 scene 时，为进入其它 scene 在拦截弹窗中选择结束当前 scene。,Scene Completed 必传；上报 Scene Completed 不要求等待拍立得/回忆生成结果。
+action,String,离场钩子弹出后，用户选择留下还是离开。,stay / leave,v1.0.0,1.0 Scene PMF 补充,Scene Exit Hook Responded,FE,stay=点击留下/继续当前 scene；leave=点击离开当前 scene。,用于 Scene Exit Hook Responded，判断离场钩子是否把用户留住。
