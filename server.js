@@ -12,6 +12,13 @@ const mime = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "application/javascript; charset=utf-8",
+  ".md": "text/plain; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".json": "application/json; charset=utf-8",
 };
 
 function json(res, status, body) {
@@ -193,7 +200,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/chat") return handleChat(req, res);
     if (req.method === "POST" && url.pathname === "/api/scene") return handleScene(req, res);
 
-    const safePath = url.pathname === "/" ? "/index.html" : url.pathname;
+    // Directory-style paths ("/" or any "/dir/") resolve to their index.html
+    const safePath = url.pathname.endsWith("/") ? `${url.pathname}index.html` : url.pathname;
     const filePath = path.join(__dirname, safePath);
     if (!filePath.startsWith(__dirname)) {
       res.writeHead(403);

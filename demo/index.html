@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Idol 102 · 演示 & 业务说明</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./demo.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <b id="verName">Idol 102 1.0</b>
+        <span>演示 &amp; 业务说明 · Demo Shell</span>
+      </div>
+      <span class="tag" id="verTag">v1.0</span>
+      <div class="spacer"></div>
+      <div class="doc-menu" id="docMenu">
+        <button type="button" id="docToggle">版本文档 ▾</button>
+        <div class="doc-list" id="docList"></div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="stage-wrap">
+        <div class="stage-frame">
+          <iframe id="protoFrame" src="../index.html" title="Idol 102 prototype"></iframe>
+          <div class="hotspot-layer" id="hotspotLayer"></div>
+        </div>
+        <div class="stage-toolbar">
+          <label><input type="checkbox" id="toggleHotspots" checked /> 显示可点击热区</label>
+          <button type="button" id="reloadProto">重载原型</button>
+          <span class="cur-screen" id="curScreen">—</span>
+        </div>
+      </div>
+
+      <section class="spec" id="spec">
+        <div class="module-card" id="moduleCard"><p class="role">加载中…</p></div>
+      </section>
+    </div>
+
+    <script type="module" src="./demo.js"></script>
+  </body>
+</html>
