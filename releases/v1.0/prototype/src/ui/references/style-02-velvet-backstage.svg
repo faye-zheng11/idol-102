@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 356" role="img" aria-label="Style 02 Velvet Backstage UI reference">
+  <defs>
+    <linearGradient id="pageBg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2d1426"/>
+      <stop offset=".52" stop-color="#242432"/>
+      <stop offset="1" stop-color="#11222d"/>
+    </linearGradient>
+    <linearGradient id="heroPanel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#3e2235" stop-opacity=".72"/>
+      <stop offset=".58" stop-color="#332737" stop-opacity=".72"/>
+      <stop offset="1" stop-color="#1b1f2a" stop-opacity=".74"/>
+    </linearGradient>
+    <linearGradient id="infoPanel" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2f2a37" stop-opacity=".76"/>
+      <stop offset="1" stop-color="#142531" stop-opacity=".76"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-20%" width="120%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="26" flood-color="#05070b" flood-opacity=".38"/>
+    </filter>
+    <style>
+      .label { font: 800 20px Inter, PingFang SC, Arial, sans-serif; letter-spacing: 6px; }
+      .title { font: 800 43px Inter, PingFang SC, Arial, sans-serif; }
+      .body { font: 700 25px Inter, PingFang SC, Arial, sans-serif; fill: #d4b7c7; }
+      .card-title { font: 800 22px Inter, PingFang SC, Arial, sans-serif; fill: #f7eef4; }
+      .card-copy { font: 700 19px Inter, PingFang SC, Arial, sans-serif; fill: #c0aab8; }
+    </style>
+  </defs>
+
+  <rect width="2048" height="356" fill="url(#pageBg)"/>
+  <rect x="21" y="28" width="1098" height="350" rx="8" fill="url(#heroPanel)" stroke="#ffffff" stroke-opacity=".17" filter="url(#shadow)"/>
+  <rect x="1146" y="28" width="899" height="350" rx="8" fill="url(#infoPanel)" stroke="#ffffff" stroke-opacity=".17" filter="url(#shadow)"/>
+
+  <text x="49" y="71" class="label" fill="#ffdc87">STYLE 02</text>
+  <text x="49" y="125" class="title" fill="#fff9ff">Velvet Backstage</text>
+  <text x="49" y="177" class="body">更像后台休息室、玫瑰灯、香槟金门牌。整体更成熟、更亲密，甜度低一点但暧昧更厚，适合偏剧情</text>
+  <text x="49" y="217" class="body">向、慢热关系推进。</text>
+
+  <g>
+    <rect x="1174" y="56" width="414" height="158" rx="10" fill="#171c25" fill-opacity=".6" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="1189" y="90" class="card-title">颜色</text>
+    <text x="1189" y="123" class="card-copy">#08070D 背景，#FF8AAE 亲密主色，#F6CF8B</text>
+    <text x="1189" y="150" class="card-copy">会员/邀请，#C25B84 深玫瑰。</text>
+    <rect x="1189" y="163" width="37" height="37" rx="7" fill="#08070d" stroke="#ffffff" stroke-opacity=".16"/>
+    <rect x="1234" y="163" width="37" height="37" rx="7" fill="#ff8aae"/>
+    <rect x="1279" y="163" width="37" height="37" rx="7" fill="#f6cf8b"/>
+    <rect x="1324" y="163" width="37" height="37" rx="7" fill="#c25b84"/>
+  </g>
+
+  <g>
+    <rect x="1604" y="56" width="414" height="158" rx="10" fill="#171c25" fill-opacity=".6" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="1619" y="90" class="card-title">字体字号</text>
+    <text x="1619" y="123" class="card-copy">标题更窄更优雅：H1 32，页标题 18，卡片标题</text>
+    <text x="1619" y="150" class="card-copy">16，正文 12-13。</text>
+  </g>
+
+  <g>
+    <rect x="1174" y="230" width="414" height="120" rx="10" fill="#171c25" fill-opacity=".6" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="1189" y="265" class="card-title">边框阴影</text>
+    <text x="1189" y="298" class="card-copy">8px 圆角；玫瑰金描边 16%；柔焦暗影，不使用</text>
+    <text x="1189" y="325" class="card-copy">大面积高渐变。</text>
+  </g>
+
+  <g>
+    <rect x="1604" y="230" width="414" height="120" rx="10" fill="#171c25" fill-opacity=".6" stroke="#ffffff" stroke-opacity=".14"/>
+    <text x="1619" y="265" class="card-title">组件</text>
+    <text x="1619" y="298" class="card-copy">丝绒邀请卡、后台通行标签、金色进度条、剧本章</text>
+    <text x="1619" y="325" class="card-copy">节卡、收藏票根小卡。</text>
+  </g>
+</svg>

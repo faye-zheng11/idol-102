@@ -1,0 +1,13 @@
+﻿name,description,Last Version,需求备注,属性归属,更新口径,AI执行说明
+user_id,用户唯一 ID，用于跨端归因与留存分析,v1.0.0,服务端生成，不使用手机号/邮箱明文,BE,账号创建时由服务端生成并保持稳定；用于跨端归因、留存和去重。,服务端权威 ID。不要上报手机号、邮箱、设备号明文；客户端只携带服务端返回的匿名/用户 ID。
+is_new_user,是否新用户，用于登录后 OB/Home 分流与新手漏斗,v1.0.0,首次成功登录自动创建账号时为 true,BE,首次成功创建账号时为 true；老用户登录或恢复登录为 false。,服务端/账号系统判断。不要由前端按本地缓存猜测。
+first_character_id,首位建立关系的角色 ID,v1.0.0,OB Character Confirmed 成功后写入,BE,OB Character Confirmed 成功保存首位角色关系后写入，后续不随默认角色切换覆盖。,服务端权威属性。用于新手激活和角色偏好，不要每次切换角色都更新。
+first_character_name,首位建立关系的角色昵称,v1.0.0,用于角色偏好分群,BE,与 first_character_id 同步写入展示名/昵称，用于分析展示；角色改名时可按产品需要保留首次名或同步当前名。,辅助分析属性。指标优先用 first_character_id，name 只用于人读展示。
+ob_status,用户 OB 状态：not_started / in_progress / completed,v1.0.0,启动路由和漏斗分析核心属性,BE,OB 状态机更新：not_started / in_progress / completed；路由和漏斗均以该状态为准。,服务端权威属性。前端不要只按页面进度覆盖 completed。
+default_language,默认语言：en / zh / de,v1.0.0,影响文案、角色文本、语音字幕和电话字幕,Hybrid,用户选择语言并保存成功后更新；首次可由设备/系统默认写入。,前端可发起，保存成功后以后端/配置持久化为准；影响内容和字幕口径。
+created_at,账号创建时间,v1.0.0,服务端时间,BE,账号创建成功时写入服务端时间，之后不覆盖。,服务端时间。用于 cohort 和留存，前端不要传本地时间。
+last_login_at,最近登录时间,v1.0.0,服务端时间,BE,每次登录成功或有效会话恢复时由服务端更新时间。,服务端时间。用于活跃/回访判断，不用客户端本地时间。
+friend_count,已添加角色数量,v1.0.0,多角色扩展分群,Derived,按已建立关系的角色数量派生，可由服务端定期/实时维护。,分析派生属性。不要让客户端每个事件自行累加，避免计数漂移。
+moment_count,累计拍立得回忆 / Moment 数量,v1.0.0,按实际回忆/Moment 生成结果派生；不作为 1.0 Scene Completed 的上报前置条件。,Derived,按服务端实际生成成功的回忆/Moment 数量派生，可由服务端定期/实时维护。,分析派生属性。Scene Completed 不要求等待回忆生成结果；moment_count 如需统计，按后端实际生成结果后处理。
+active_scene_id,当前 Active Scene ID，为空表示无进行中 Scene,v1.0.0,用于恢复正在进行中的 Scene；完成口径按 Scene Completed。,BE,Active Scene 创建成功后写入；Scene Completed 后清空。Scene Completed 包含 manual_exit / exit_hook_leave / expired_24h / switch_scene_exit。,服务端状态属性。前端展示进行中状态时读取，不要自行制造 active_scene_id。
+app_version,最近一次使用 App 版本,v1.0.0,用于版本灰度和问题排查,FE,每次 App Launch 或关键事件上报时携带最近使用版本；服务端可保存最近一次版本。,前端上下文属性，用于版本排查和灰度；不要把版本当用户行为事件。

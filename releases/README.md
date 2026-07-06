@@ -38,4 +38,6 @@ releases/
 - 版本号用产品版本（v1.0 / v1.1…）；封版时同时打 git tag，两者对应。
 - 讨论/学习不封存：可迁移学习已在 `workbench/LEARNINGS.md` 里跨版本累积。
 
-_（还没有封存版本。第一个版本 OK 后，这里会出现 v1.0/。）_
+## 已封存
+
+- **v1.0**（2026-07-06）— 见 `v1.0/RELEASE.md`。冻结了当时的 prototype / docs(含埋点) / demo / prompts / data；git 标签 `v1.0`。

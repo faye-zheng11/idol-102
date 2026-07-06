@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1400" role="img" aria-label="Night street map concept">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#090b10"/>
+      <stop offset=".45" stop-color="#141820"/>
+      <stop offset="1" stop-color="#07080b"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1d222b"/>
+      <stop offset=".55" stop-color="#10131a"/>
+      <stop offset="1" stop-color="#252016"/>
+    </linearGradient>
+    <radialGradient id="goldGlow" cx="62%" cy="27%" r="44%">
+      <stop offset="0" stop-color="#d5b071" stop-opacity=".42"/>
+      <stop offset=".5" stop-color="#7f6a45" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#08090b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blueGlow" cx="26%" cy="18%" r="38%">
+      <stop offset="0" stop-color="#8fb8ca" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#08090b" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="28" stdDeviation="22" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+    <filter id="lamp" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="900" height="1400" fill="url(#sky)"/>
+  <rect width="900" height="1400" fill="url(#goldGlow)"/>
+  <rect width="900" height="1400" fill="url(#blueGlow)"/>
+
+  <g opacity=".42">
+    <path d="M-60 330 C180 245 320 245 520 330 S840 405 980 285" fill="none" stroke="#2c3440" stroke-width="46"/>
+    <path d="M-80 990 C120 830 340 828 548 980 S812 1170 980 1010" fill="none" stroke="#2b3038" stroke-width="52"/>
+    <path d="M448 -40 C424 200 420 470 450 700 S498 1130 426 1450" fill="none" stroke="#303640" stroke-width="70"/>
+    <path d="M120 -70 C195 270 238 516 218 810 S174 1138 252 1460" fill="none" stroke="#242a34" stroke-width="34"/>
+    <path d="M718 -70 C655 230 650 500 718 770 S806 1132 705 1460" fill="none" stroke="#242a34" stroke-width="34"/>
+  </g>
+
+  <g opacity=".18" stroke="#d8c6a9" stroke-width="2">
+    <path d="M-20 175 L920 476"/>
+    <path d="M-20 474 L920 805"/>
+    <path d="M-20 779 L920 1106"/>
+    <path d="M-20 1100 L920 1320"/>
+    <path d="M108 0 L148 1400"/>
+    <path d="M308 0 L335 1400"/>
+    <path d="M604 0 L554 1400"/>
+    <path d="M808 0 L744 1400"/>
+  </g>
+
+  <g filter="url(#soft)">
+    <g transform="translate(72 188)">
+      <path d="M30 72 145 10 286 42 308 210 202 286 46 236Z" fill="#4a3838"/>
+      <path d="M46 102 192 132 308 210 202 286 46 236Z" fill="#151920"/>
+      <path d="M30 72 145 10 286 42 192 132 46 102Z" fill="#7a5c52"/>
+      <rect x="78" y="128" width="78" height="86" rx="7" fill="#d9c5a2" opacity=".75"/>
+      <rect x="172" y="150" width="84" height="58" rx="5" fill="#9db8c8" opacity=".42"/>
+      <text x="164" y="248" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#f6e6c8">COFFEE</text>
+    </g>
+
+    <g transform="translate(550 222)">
+      <path d="M28 78C10 28 74 2 132 42c38-37 122-4 119 58 28 46-20 106-78 90-44 36-112 22-126-30-34-18-40-54-19-82Z" fill="#6d8467"/>
+      <path d="M58 100C78 60 150 58 188 96c28 28 4 78-40 90-54 16-110-14-114-56-1-11 6-24 24-30Z" fill="#355e3b"/>
+      <rect x="142" y="86" width="50" height="118" rx="18" fill="#d5b071" opacity=".54"/>
+      <circle cx="146" cy="96" r="42" fill="#d5b071" opacity=".24" filter="url(#lamp)"/>
+    </g>
+
+    <g transform="translate(88 802)">
+      <path d="M12 70 128 10 302 52 332 210 182 318 18 244Z" fill="#2d4f68"/>
+      <path d="M18 108 174 132 332 210 182 318 18 244Z" fill="#1a2029"/>
+      <path d="M12 70 128 10 302 52 174 132 18 108Z" fill="#6f94aa"/>
+      <rect x="72" y="144" width="174" height="86" rx="8" fill="#e9deca" opacity=".7"/>
+      <rect x="104" y="170" width="42" height="60" rx="3" fill="#101218"/>
+      <rect x="170" y="166" width="50" height="38" rx="3" fill="#a8c6d8" opacity=".58"/>
+      <text x="166" y="272" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#f6e6c8">STUDIO</text>
+    </g>
+
+    <g transform="translate(522 884)">
+      <path d="M10 58 126 2 286 48 272 226 54 248Z" fill="#ad8a3c"/>
+      <path d="M54 92 272 72 272 226 54 248Z" fill="#191d23"/>
+      <path d="M10 58 126 2 286 48 54 92Z" fill="#e2c26b"/>
+      <rect x="92" y="118" width="72" height="88" rx="7" fill="#d9c5a2" opacity=".78"/>
+      <rect x="188" y="116" width="46" height="90" rx="4" fill="#a8c6d8" opacity=".52"/>
+      <text x="164" y="248" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#f6e6c8">SPATI</text>
+    </g>
+
+    <g transform="translate(382 1118)">
+      <path d="M10 52 166 0 330 74 304 234 56 250Z" fill="#626564"/>
+      <path d="M56 92 304 96 304 234 56 250Z" fill="#171b20"/>
+      <path d="M10 52 166 0 330 74 56 92Z" fill="#9fa4a3"/>
+      <rect x="100" y="116" width="62" height="82" rx="5" fill="#e4d7bf" opacity=".54"/>
+      <rect x="188" y="118" width="62" height="82" rx="5" fill="#8fb8ca" opacity=".44"/>
+      <text x="178" y="224" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#f6e6c8">LABEL</text>
+    </g>
+  </g>
+
+  <g opacity=".55" stroke="#eed7a6" stroke-width="3" fill="none" stroke-dasharray="11 13">
+    <path d="M198 310 C292 388 300 520 420 612 S612 744 642 925"/>
+    <path d="M217 934 C350 824 480 860 626 968"/>
+    <path d="M552 1156 C456 1030 454 822 462 640 S484 332 626 314"/>
+  </g>
+
+  <g filter="url(#lamp)" opacity=".86">
+    <circle cx="232" cy="382" r="13" fill="#d5b071"/>
+    <circle cx="646" cy="384" r="11" fill="#d5b071"/>
+    <circle cx="210" cy="960" r="12" fill="#9fc8da"/>
+    <circle cx="652" cy="1002" r="12" fill="#d5b071"/>
+    <circle cx="572" cy="1218" r="11" fill="#d8c6a9"/>
+  </g>
+
+  <rect y="1040" width="900" height="360" fill="url(#road)" opacity=".52"/>
+  <path d="M-30 1298 C220 1178 468 1164 930 1310" fill="none" stroke="#d6c5a6" stroke-width="4" opacity=".16"/>
+</svg>

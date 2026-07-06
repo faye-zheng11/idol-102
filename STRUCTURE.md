@@ -12,6 +12,7 @@
 | 📄 **文档** | `docs/` | 项目级总 PRD + 各模块业务 PRD；`BACKEND_STORIES.md` 后端 story；`tracking/` 埋点表；`_setup/` 配置截图 | 全员 / 开发 |
 | 🎬 **演示** | `demo/` | 给团队/开发看的实时演示壳：左内嵌可操作原型，右随页面显示业务说明，顶挂版本文档 | 团队 / 开发 |
 | 📊 **数据** | `workbench/data/` | 数据分析产出（oppa-analyze/BI 结果、指标）；P4 从这取数 | PM |
+| 🧠 **后端 prompt** | `prompts/` | 开发实际运行的 LLM/TTS 提示语逐字快照站；聊体感、排查角色行为时 AI 直接读 | PM / 开发 / AI |
 | 💭 **讨论 & 工作** | `workbench/`（`bets/` `playbooks/`（含 `handoff/` 交给开发的模板）`references/` `drafts/` `STATE.md` `WORKFLOW.md` `LEARNINGS.md`） | PM 跑流程（P0→P5）的地方，入口 `/pm`；讨论都在 bets | PM |
 
 ## 封存区（冻结的版本）

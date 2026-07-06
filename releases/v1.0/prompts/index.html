@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>idol102 · Prompt Routing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-lang="zh">
+
+<header class="console">
+  <div class="in">
+    <div class="top"><span class="live"></span> idol102 · llm prompt routing · datasheet</div>
+    <h1><a href="index.html">Prompt&nbsp;<em>Routing</em></a></h1>
+    <p class="sub">chat / Scene / 记忆 / Trigger 链路的全部提示语 — 功能点 × 模型 × 原文</p>
+    <div class="readout">
+      <span>链路 <b>12</b></span>
+      <span>prompt <b>33</b></span>
+      <span>模型总线 <b>5</b></span>
+      <span>子页 <b>3</b></span>
+      <span>rev <b>2026-07-03</b></span>
+      <span>锚点基准 <b>42f737a</b></span>
+    </div>
+    <div class="tabs">
+      <a class="active" href="index.html">首页</a>
+      <a href="chat.html"><span class="dot" style="background:var(--gen)"></span>普通聊天</a>
+      <a href="scene.html"><span class="dot" style="background:var(--gpt)"></span>Scene 场景</a>
+      <a href="media.html"><span class="dot" style="background:var(--fish)"></span>翻译语音</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav>
+  <p class="lbl">首页</p>
+  <a href="#matrix"><span class="k">◆</span> 路由矩阵</a>
+  <a href="#dir"><span class="k">◆</span> 分组目录</a>
+  <a href="#buses"><span class="k">◆</span> 模型总线</a>
+  <a href="#conv"><span class="k">§</span> 通用约定</a>
+  <p class="lbl">子页</p>
+  <a href="chat.html"><span class="k">1</span> 普通聊天</a>
+  <a href="scene.html"><span class="k">2</span> Scene 场景</a>
+  <a href="media.html"><span class="k">3</span> 翻译语音</a>
+  <div class="leg">
+    <div class="row"><span class="sw" style="background:var(--gen)"></span>GEN 内容生成</div>
+    <div class="row"><span class="sw" style="background:var(--gpt)"></span>GPT 判定/翻译</div>
+    <div class="row"><span class="sw" style="background:var(--grok)"></span>GROK reply配置 / H·J 硬编码</div>
+    <div class="row"><span class="sw" style="background:var(--fish)"></span>FISH TTS</div>
+    <div class="row"><span class="nd nd-p" style="color:var(--sub)"></span>&nbsp;主 · <span class="nd nd-s" style="color:var(--sub);margin-left:4px"></span>&nbsp;辅</div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ===== MATRIX ===== -->
+<section class="sec" id="matrix">
+  <div class="eyebrow"><span class="tick" style="background:var(--hot)"></span>Signal Map · 功能链路 × 模型总线 · 点行跳详情</div>
+  <h2>路由矩阵</h2>
+  <div class="matrix-wrap">
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th class="mh-fn">功能链路</th>
+        <th class="mh c-gen"><span class="bus bus-gen">GEN</span><em>llama-4-maverick</em></th>
+        <th class="mh c-gpt"><span class="bus bus-gpt">GPT</span><em>gpt-5.4-nano</em></th>
+        <th class="mh c-grok"><span class="bus bus-grok">GROK</span><em>grok-4.3</em></th>
+        <th class="mh c-fish"><span class="bus bus-fish">FISH</span><em>s2-pro</em></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th class="rk"><a href="chat.html#ga"><b class="lt lt-grok">A</b>普通聊天回复生成</a></th>
+        <td class="c-gen"><span class="nd nd-s"></span><b class="mp">Scene台词·收尾</b></td>
+        <td class="c-gpt"><span class="nd nd-s"></span><b class="mp">翻译</b></td>
+        <td class="c-grok"><span class="nd nd-p"></span><b class="mp">0.7·high</b></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="chat.html#gb"><b class="lt lt-gen">B</b>类型化记忆装配</a></th>
+        <td class="c-gen"><span class="nd nd-s"></span><b class="mp">注入</b></td>
+        <td class="c-gpt"><span class="nd nd-o"></span></td><td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="chat.html#gc"><b class="lt lt-gpt">C</b>消息形态判定</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td>
+        <td class="c-gpt"><span class="nd nd-p"></span><b class="mp">0.2·256</b></td>
+        <td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="chat.html#gd"><b class="lt lt-gpt">D</b>记忆写入判断</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td>
+        <td class="c-gpt"><span class="nd nd-p"></span><b class="mp">0.0·400</b></td>
+        <td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="scene.html#ge"><b class="lt lt-gpt">E</b>Trigger 邀请匹配</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td>
+        <td class="c-gpt"><span class="nd nd-p"></span><b class="mp">0.0·512</b></td>
+        <td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="scene.html#gf"><b class="lt lt-gpt">F</b>Scene 导演编排</a></th>
+        <td class="c-gen"><span class="nd nd-s"></span><b class="mp">旁白</b></td>
+        <td class="c-gpt"><span class="nd nd-p"></span><b class="mp">0.2·2048</b></td>
+        <td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="scene.html#gg"><b class="lt lt-gpt">G</b>Scene 开场管线 B9</a></th>
+        <td class="c-gen"><span class="nd nd-s"></span><b class="mp">开场白</b></td>
+        <td class="c-gpt"><span class="nd nd-p"></span><b class="mp">judge</b></td>
+        <td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="scene.html#gh"><b class="lt lt-grok">H</b>Scene 运行摘要</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td><td class="c-gpt"><span class="nd nd-o"></span></td>
+        <td class="c-grok"><span class="nd nd-p"></span><b class="mp">0.4·600</b></td>
+        <td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="scene.html#gi"><b class="lt lt-gen">I</b>Location Moment 总结</a></th>
+        <td class="c-gen"><span class="nd nd-p"></span><b class="mp">0.6</b></td>
+        <td class="c-gpt"><span class="nd nd-o"></span></td><td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="scene.html#gj"><b class="lt lt-grok">J</b>Scene Followup</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td><td class="c-gpt"><span class="nd nd-o"></span></td>
+        <td class="c-grok"><span class="nd nd-p"></span><b class="mp">0.85·400</b></td>
+        <td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="media.html#gk"><b class="lt lt-gpt">K</b>字幕翻译</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td>
+        <td class="c-gpt"><span class="nd nd-p"></span><b class="mp">0.2·2400</b></td>
+        <td class="c-grok"><span class="nd nd-o"></span></td><td class="c-fish"><span class="nd nd-o"></span></td></tr>
+      <tr><th class="rk"><a href="media.html#gl"><b class="lt lt-fish">L</b>TTS 语音合成</a></th>
+        <td class="c-gen"><span class="nd nd-o"></span></td><td class="c-gpt"><span class="nd nd-o"></span></td><td class="c-grok"><span class="nd nd-o"></span></td>
+        <td class="c-fish"><span class="nd nd-p"></span><b class="mp">无 prompt</b></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ===== GROUP DIRECTORY ===== -->
+<section class="sec" id="dir">
+  <div class="eyebrow"><span class="tick" style="background:var(--ink)"></span>Grouping · 业务域 → 职责阶段 → 链路</div>
+  <h2>分组目录</h2>
+  <div class="grp">
+    <div class="col">
+      <h3><span class="chip" style="background:var(--gen)">1</span><a href="chat.html">普通聊天</a></h3>
+      <div class="pg">chat.html</div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--grok)"></span>回复生成</div>
+        <a href="chat.html#ga"><b class="lt lt-grok">A</b>回复内容生成</a>
+      </div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--gen)"></span>记忆系统</div>
+        <a href="chat.html#gb"><b class="lt lt-gen">B</b>记忆装配</a>
+        <a href="chat.html#gd"><b class="lt lt-gpt">D</b>记忆写入</a>
+      </div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--gpt)"></span>回复形态</div>
+        <a href="chat.html#gc"><b class="lt lt-gpt">C</b>形态判定</a>
+      </div>
+    </div>
+    <div class="col">
+      <h3><span class="chip" style="background:var(--gpt)">2</span><a href="scene.html">Scene 场景</a></h3>
+      <div class="pg">scene.html</div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--gpt)"></span>触发 · 开场</div>
+        <a href="scene.html#ge"><b class="lt lt-gpt">E</b>Trigger 匹配</a>
+        <a href="scene.html#gg"><b class="lt lt-gpt">G</b>开场管线</a>
+      </div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--gpt)"></span>逐轮导演</div>
+        <a href="scene.html#gf"><b class="lt lt-gpt">F</b>导演编排</a>
+      </div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--grok)"></span>摘要 · 收束</div>
+        <a href="scene.html#gh"><b class="lt lt-grok">H</b>运行摘要</a>
+        <a href="scene.html#gi"><b class="lt lt-gen">I</b>Moment 总结</a>
+        <a href="scene.html#gj"><b class="lt lt-grok">J</b>Followup</a>
+      </div>
+    </div>
+    <div class="col">
+      <h3><span class="chip" style="background:var(--fish)">3</span><a href="media.html">翻译语音</a></h3>
+      <div class="pg">media.html</div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--gpt)"></span>翻译</div>
+        <a href="media.html#gk"><b class="lt lt-gpt">K</b>字幕翻译</a>
+      </div>
+      <div class="st-row">
+        <div class="sl"><span class="st-tick" style="background:var(--fish)"></span>语音合成</div>
+        <a href="media.html#gl"><b class="lt lt-fish">L</b>TTS</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BUSES ===== -->
+<section class="sec" id="buses">
+  <div class="eyebrow"><span class="tick" style="background:var(--gen)"></span>Model Buses · 门面 LlmPort → DefaultLlmPort 路由</div>
+  <h2>模型总线</h2>
+  <table>
+    <thead><tr><th>总线</th><th>Provider</th><th>model-id</th><th>采样</th><th>配置来源</th><th>承载</th></tr></thead>
+    <tbody>
+      <tr><td><span class="bus bus-grok">REPLY</span></td><td>x.ai<br><span style="color:var(--sub)"><code>CHAT_REPLY_*</code> 零发版切换</span></td><td><code>grok-4.3</code></td><td>0.7 / topP 0.8 / fp 0.6 · pp 0.5<br><span style="color:var(--sub)">（GROK 方言下双 penalty 客户端剔除）</span> / effort high</td><td><code>system.chat.model.reply</code></td><td>仅普通聊天多气泡回复</td></tr>
+      <tr><td><span class="bus bus-gen">GEN</span></td><td>OpenRouter</td><td><code>meta-llama/llama-4-maverick</code></td><td>0.6 / topP 0.9</td><td><code>system.chat.model.content</code></td><td>Scene 台词 · 单 content 旧路径 · Scene 收尾 · 旁白 · Moment 总结（5 点共享）</td></tr>
+      <tr><td><span class="bus bus-gpt">GPT</span></td><td>OpenAI</td><td><code>gpt-5.4-nano</code></td><td>名义 0.0–0.2<br><span style="color:var(--sub)">GPT 方言下 temp 实际不下发</span></td><td>六处代码常量<br><span style="color:var(--sub)">凭证 <code>system.chat.llm.gpt</code></span></td><td>全部判定 + 翻译</td></tr>
+      <tr><td><span class="bus bus-grok">GROK</span></td><td>x.ai</td><td><code>grok-4.3</code></td><td>0.4 / 0.85</td><td>类内硬编码 · H/J</td><td>运行摘要 · Followup</td></tr>
+      <tr><td><span class="bus bus-fish">FISH</span></td><td>Fish.audio</td><td><code>s2-pro</code></td><td>—</td><td><code>system.chat.tts.fish</code></td><td>TTS（无文本 prompt）</td></tr>
+    </tbody>
+  </table>
+  <div class="warn"><span>⚑</span><span><b>方言矩阵 · </b>GPT：reasoning 方言——<code>max_completion_tokens</code> 取代 <code>max_tokens</code>，temperature / top_p / 双 penalty 不下发，<code>reasoning_effort</code> 缺省补 none。GROK：经典方言，但客户端静默剔除 frequency / presence penalty（Grok 4 系不支持），<code>reasoning_effort</code> 有值才发。OPENROUTER：经典方言全量透传。全部调用 structured output，随请求下发 JSON Schema。</span></div>
+</section>
+
+<!-- ===== CONVENTIONS ===== -->
+<section class="sec" id="conv">
+  <div class="eyebrow"><span class="tick" style="background:var(--ink)"></span>Conventions · 全链路通用</div>
+  <h2>通用约定</h2>
+  <table>
+    <thead><tr><th>约定</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>注入防护</td><td>每条 prompt 末尾「不可信素材 / 仅供理解参考」；记忆块额外声明「用户当前输入永远优先」</td></tr>
+      <tr><td>Fail-safe</td><td>LLM 调用置于 DB 事务外，失败一律静默降级、不重试、不阻塞主对话流程</td></tr>
+      <tr><td>Structured output</td><td>随请求下发 JSON Schema，反序列化为 DTO/record（Jackson 3 <code>tools.jackson</code>）</td></tr>
+      <tr><td>模型口径</td><td>按功能固定、不按语言路由；<code>reply</code>（普通聊天多气泡）与 <code>content</code>（其余 5 个生成点）双配置分离；prod 不覆盖 <code>system.chat.*</code>，模型与采样 dev = prod</td></tr>
+      <tr><td>超时</td><td>LLM / TTS 均 300s（<code>system.chat.llm.*.timeout</code> / <code>system.chat.tts.fish.timeout</code>）；Scene 导演判定另有 <code>director-timeout</code> 12s</td></tr>
+      <tr><td>双例外</td><td><span class="c-grok">H 运行摘要 · J Followup</span> 硬编码 Grok <code>grok-4.3</code>，改内容生成模型时勿遗漏（REPLY 总线为配置项、非例外）</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>idol102 · llm prompt routing · 原文逐字取自 api-app / assembly-chat / common-util · 各提示语在子页内可独立 中文 | EN 切换 · 2026-07-03 · 锚点基准 42f737a</footer>
+</main>
+</div>
+</body>
+</html>

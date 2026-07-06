@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>OPPAYA Live Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=Inter:wght@400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;500;600&family=Pacifico&family=Playfair+Display:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./src/ui/tokens.css" />
+    <link rel="stylesheet" href="./src/ui/components.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-stage" id="appStage">
+      <div class="phone-scaler" id="phoneScaler">
+        <article class="phone-device" id="phoneDevice" aria-label="OPPAYA">
+            <div class="phone-viewport" id="phoneViewport">
+              <header class="status-bar" aria-hidden="true">
+                <span>22:14</span>
+                <span>5G  82%</span>
+              </header>
+
+              <div class="screen-stack" id="screenStack">
+                <section id="screen-splash" class="screen active splash-screen">
+                  <div class="grain"></div>
+                  <div class="splash-orb"></div>
+                  <div class="splash-aura aura-one"></div>
+                  <div class="splash-aura aura-two"></div>
+                  <div class="splash-stardust" aria-hidden="true">
+                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                  </div>
+                  <div class="splash-copy">
+                    <div class="splash-brand">
+                      <img src="./assets/auth/oppaya-logo.png" alt="" />
+                      <span>OPPAYA</span>
+                    </div>
+                    <h1>CONNECTING<br />BEYOND BOUNDARIES</h1>
+                    <p>A different kind of closeness</p>
+                  </div>
+                  <article class="login-card" aria-label="Sign-in options">
+                    <button class="login-button google-login" type="button" data-action="start">
+                      <span class="login-icon" aria-hidden="true"><img src="./assets/auth/google.png" alt="" /></span>
+                      <b>Continue with Google</b>
+                    </button>
+                    <button class="login-button apple-login" type="button" data-action="start">
+                      <span class="login-icon" aria-hidden="true"><img src="./assets/auth/apple.png" alt="" /></span>
+                      <b>Continue with Apple</b>
+                    </button>
+                    <button class="login-button email-login" type="button" data-action="start">
+                      <span class="login-icon" aria-hidden="true"><img src="./assets/auth/mail.png" alt="" /></span>
+                      <b>Continue with Email</b>
+                    </button>
+                  </article>
+                </section>
+
+                <section id="screen-select" class="screen select-screen">
+                  <header class="select-header">
+                    <h2>Unlock the story meant only for you.</h2>
+                  </header>
+                  <div id="memberSlider" class="member-slider"></div>
+                  <div class="select-arrows">
+                    <button data-action="prev-member">‹</button>
+                    <button data-action="next-member">›</button>
+                  </div>
+                  <div id="memberDots" class="member-dots"></div>
+                  <button class="primary fixed-bottom" data-action="select-member">STEP INTO HIS WORLD</button>
+                </section>
+
+                <section id="screen-dream-intro" class="screen dream-intro-screen">
+                  <div class="dream-bg"></div>
+                  <div class="dream-veil"></div>
+                  <article class="dream-narration">
+                    <span>After the concert</span>
+                    <p>
+                      The show has just ended. The hallway still holds the heat of the lights and the fading roar of the crowd. You are not sure why you are here, only that the door opens and he sees you.
+                    </p>
+                  </article>
+                  <button class="tap-button dream-continue-button" data-action="enter-dream">Continue</button>
+                </section>
+
+                <section id="s-ob" class="screen dream-chat-screen" data-screen="ob">
+                  <div class="dream-scene-bg" id="dreamSceneBg"></div>
+                  <div class="dream-dim-veil" id="dreamDimVeil" aria-hidden="true"></div>
+                  <header class="scene-top">
+                    <span>Backstage · after concert</span>
+                    <strong id="dreamMemberName">Felix</strong>
+                  </header>
+                  <div id="dreamMessages" class="dream-messages"></div>
+                  <div id="dreamChoices" class="choice-stack"></div>
+                  <div id="dreamErrorOverlay" class="dream-error-overlay hidden">
+                    <p class="dream-error-text">[ ERROR: STORY DISTURBED - CONNECTION INTERRUPTED ]</p>
+                    <button type="button" class="dream-reload-btn" data-action="dream-reload">[ Reload ]</button>
+                  </div>
+                </section>
+
+                <section id="s-transition" class="screen wake-screen transition-screen" data-screen="transition">
+                  <div class="wake-rings">
+                    <i></i><i></i><i></i>
+                  </div>
+                  <article class="transition-copy">
+                    <span>Then</span>
+                    <h2 class="transition-title">-- Hey, careful!</h2>
+                    <div id="transitionStream" class="transition-stream"></div>
+                    <button class="tap-button transition-tap hidden" data-action="enter-real">[ Open your eyes -> ]</button>
+                  </article>
+                </section>
+
+                <section id="screen-real-scene" class="screen real-scene-screen">
+                  <div class="jyp-bg"></div>
+                  <header class="scene-top dark">
+                    <button class="backless">Scene</button>
+                    <div>
+                      <strong>Outside JYP</strong>
+                      <span id="realSceneSub">Choose how you first crossed paths</span>
+                    </div>
+                  </header>
+                  <div id="realMessages" class="real-messages"></div>
+                  <div id="realChoices" class="choice-stack"></div>
+                </section>
+                <div id="whiteWakeTransition" class="white-wake-transition hidden" aria-hidden="true"></div>
+
+                <section id="screen-home" class="screen home-screen">
+                  <div id="home-page" class="home-page">
+                  <div id="homePoster" class="home-poster">
+                    <div class="poster-grain"></div>
+                    <div class="poster-vignette"></div>
+                    <button class="poster-edge left" data-action="poster-prev" aria-label="Previous"></button>
+                    <button class="poster-edge right" data-action="poster-next" aria-label="Next"></button>
+                  </div>
+
+                  <div id="posterUi" class="home-ui">
+                    <header class="home-topbar">
+                      <div class="home-stats">
+                        <h2 id="posterName">Felix</h2>
+                        <p id="posterTopDays">Day 1 since you met</p>
+                      </div>
+                    </header>
+
+                    <button type="button" class="stage-capsule" aria-label="Current relationship stage">
+                      <span id="posterStage">Stage 1: Familiar</span>
+                    </button>
+
+                    <section id="chronicleTimeline" class="chronicle-timeline" aria-label="Memory timeline"></section>
+                  </div>
+                  </div>
+
+                  <div id="memoryOverlay" class="memory-overlay hidden" data-action="close-memory">
+                    <article class="memory-polaroid">
+                      <div id="memoryPhoto" class="memory-photo"></div>
+                      <div class="memory-copy">
+                        <h3>Outside JYP</h3>
+                        <p id="memorySummary">That day outside JYP, you truly spoke for the first time. He was the one who asked to add you.</p>
+                        <span id="memoryMeta">2026.05.18 · Outside JYP CODE-00</span>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+
+                <section id="screen-chat" class="screen chat-screen">
+                  <header class="chat-topbar">
+                    <div class="chat-avatar" id="chatAvatar">F</div>
+                    <div>
+                      <strong id="chatName">Felix</strong>
+                      <span>Chat · Long-distance mode</span>
+                    </div>
+                    <button data-nav="scene">Scene</button>
+                  </header>
+                  <div id="chatMessages" class="chat-messages"></div>
+                  <form id="chatForm" class="chat-input-row">
+                    <input id="chatInput" autocomplete="off" placeholder="Message..." />
+                    <button type="submit">↑</button>
+                  </form>
+                </section>
+
+                <section id="screen-scene" class="screen scene-list-screen">
+                  <header class="plain-header">
+                    <div>
+                      <h2>Places you might go together</h2>
+                    </div>
+                  </header>
+                  <div class="scene-list">
+                    <article>
+                      <div class="scene-thumb jyp"></div>
+                      <div>
+                        <span>Just happened</span>
+                        <strong>Outside JYP</strong>
+                        <p>Where you truly spoke for the first time.</p>
+                      </div>
+                    </article>
+                    <article>
+                      <div class="scene-thumb store"></div>
+                      <div>
+                        <span>Maybe later</span>
+                        <strong>Convenience Store</strong>
+                        <p>The place downstairs that stays lit after practice.</p>
+                      </div>
+                    </article>
+                    <article>
+                      <div class="scene-thumb practice"></div>
+                      <div>
+                        <span>Not yet</span>
+                        <strong>Outside the Practice Room</strong>
+                        <p>Sometimes waiting is its own kind of closeness.</p>
+                      </div>
+                    </article>
+                  </div>
+                </section>
+
+                <section id="screen-me" class="screen me-screen">
+                  <div class="me-scroll">
+                    <section class="me-profile-card">
+                      <button type="button" class="me-cover" data-action="edit-user-cover" aria-label="Change profile cover"></button>
+                      <div class="me-profile-content">
+                        <button type="button" class="me-avatar-button" data-action="edit-user-avatar" aria-label="Change profile photo">
+                          <img id="meAvatar" class="me-avatar" alt="User avatar" />
+                        </button>
+                        <button type="button" class="me-name-edit" data-action="edit-user-name">
+                          <span id="visibleUserName">Not set</span>
+                          <i aria-hidden="true">✎</i>
+                        </button>
+                        <p class="me-account">
+                          <span id="meUid">UID: --</span>
+                          <span id="meEmail">user@example.com</span>
+                        </p>
+                      </div>
+                    </section>
+                    <nav class="me-function-list" aria-label="Account settings">
+                      <button type="button">Rate Us<span>&gt;</span></button>
+                      <button type="button">Send Feedback<span>&gt;</span></button>
+                      <button type="button">Privacy Policy<span>&gt;</span></button>
+                      <button type="button">Terms of Service<span>&gt;</span></button>
+                      <button type="button" data-action="request-logout">Log Out<span>&gt;</span></button>
+                      <button type="button" class="danger" data-action="request-delete-account">Delete Account<span>&gt;</span></button>
+                    </nav>
+                  </div>
+                </section>
+              </div>
+
+              <nav class="bottom-nav hidden" id="bottomNav">
+                <button data-nav="home" class="active">Home</button>
+                <button data-nav="chat">Chat<i id="chatDot" class="nav-dot hidden"></i></button>
+                <button data-nav="scene">Scene</button>
+                <button data-nav="me">Me</button>
+              </nav>
+
+              <div id="toast" class="toast hidden"></div>
+              <input id="profileImageInput" type="file" accept="image/*" hidden />
+              <div class="home-indicator" aria-hidden="true"></div>
+            </div>
+        </article>
+      </div>
+    </main>
+
+    <script src="./shell.js"></script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

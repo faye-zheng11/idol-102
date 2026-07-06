@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>翻译语音 · idol102 Prompt Routing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-lang="zh">
+
+<header class="console">
+  <div class="in">
+    <div class="top"><span class="live"></span> idol102 · llm prompt routing · 子页 3 / 3 · 每条提示语可独立切换 中文 | EN</div>
+    <h1><a href="index.html">Prompt&nbsp;<em>Routing</em></a></h1>
+    <p class="sub">翻译语音 — 跨链路的字幕翻译与 TTS 语音合成媒体能力</p>
+    <div class="tabs">
+      <a href="index.html">首页</a>
+      <a href="chat.html"><span class="dot" style="background:var(--gen)"></span>普通聊天</a>
+      <a href="scene.html"><span class="dot" style="background:var(--gpt)"></span>Scene 场景</a>
+      <a class="active" href="media.html"><span class="dot" style="background:var(--fish)"></span>翻译语音</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav>
+  <a class="home" href="index.html"><span class="k">←</span> 首页 / 路由矩阵</a>
+  <p class="lbl">翻译</p>
+  <a href="#gk"><span class="k">K</span> 字幕翻译</a>
+  <p class="lbl">语音合成</p>
+  <a href="#gl"><span class="k">L</span> TTS</a>
+  <div class="leg">
+    <div class="row"><span class="sw" style="background:var(--gpt)"></span>GPT 翻译</div>
+    <div class="row"><span class="sw" style="background:var(--fish)"></span>FISH TTS</div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ========== STAGE 翻译 ========== -->
+<div class="stage">
+  <span class="st-tick" style="background:var(--gpt)"></span>
+  <h2>翻译</h2>
+  <span class="chips"><span class="chip" style="background:var(--gpt)">K</span></span>
+  <span class="ln"></span>
+</div>
+
+<!-- ===== K ===== -->
+<section class="sec" id="gk">
+  <div class="eyebrow"><span class="tick" style="background:var(--gpt)"></span>Chain K · ChatSubtitleTranslator</div>
+  <h2><span class="n">K</span>字幕翻译 <span class="bus bus-gpt">GPT gpt-5.4-nano · 0.2 / 2400</span></h2>
+  <p class="lead">来电回放等按当前语言重展示字幕；同语言/空文本直返原文，失败降级原字幕。与 <a href="chat.html#ga">A8</a> 同文案、同模型，仅入口不同。</p>
+  <div class="rb" data-native="zh"><span class="id">K1</span><span class="role">system</span><span class="role u">user</span> 字幕翻译 <span class="var"></span><span class="plang"><button type="button" data-set="zh">中文</button><button type="button" data-set="en">EN</button></span><span class="src">buildMessages · schema <span class="sch">{text}</span></span></div>
+<pre class="v" data-lang="zh"><code><span class="cm">SYSTEM ▸</span> 你是翻译组件，只输出 JSON。请把文本翻译成目标语言，保留自然口语语气。
+        源语言：<span class="ph">{{source}}</span>   目标语言：<span class="ph">{{target}}</span>   输出字段：text
+<span class="cm">USER   ▸</span> 待翻译文本：<span class="ph">{{text 或 未提供}}</span></code></pre>
+<pre class="v" data-lang="en"><code><span class="cm">SYSTEM ▸</span> You are a translation component; output JSON only. Translate the text into the target language, keeping a natural spoken tone.
+        Source language: <span class="ph">{{source}}</span>   Target language: <span class="ph">{{target}}</span>   Output field: text
+<span class="cm">USER   ▸</span> Text to translate: <span class="ph">{{text or not provided}}</span></code></pre>
+</section>
+
+<!-- ========== STAGE 语音合成 ========== -->
+<div class="stage">
+  <span class="st-tick" style="background:var(--fish)"></span>
+  <h2>语音合成</h2>
+  <span class="chips"><span class="chip" style="background:var(--fish)">L</span></span>
+  <span class="ln"></span>
+</div>
+
+<!-- ===== L ===== -->
+<section class="sec" id="gl">
+  <div class="eyebrow"><span class="tick" style="background:var(--fish)"></span>Chain L · FishAudioChatTtsServiceImpl</div>
+  <h2><span class="n">L</span>TTS 语音合成 <span class="bus bus-fish">FISH s2-pro</span></h2>
+  <p class="lead">无文本 prompt，故不参与 ZH|EN 切换；仅登记模型与端点。送前有确定性文本清洗步骤（非 LLM，见下）。</p>
+  <table>
+    <thead><tr><th>项</th><th>值</th></tr></thead>
+    <tbody>
+      <tr><td>端点</td><td><code>POST /v1/tts/stream/with-timestamp</code>（SSE 流式）</td></tr>
+      <tr><td>请求头</td><td><code>model: s2-pro</code> · <code>Authorization: Bearer &lt;key&gt;</code></td></tr>
+      <tr><td>入参</td><td>已翻成角色母语的字幕文本（见 <a href="chat.html#ga">A8</a>）+ 角色 voiceprint</td></tr>
+      <tr><td>送前清洗</td><td><code>TtsSanitizer</code>（common-util，对齐 Fish 官方 clean.py）：移除 <code>\p{S}</code> 符号/emoji 修饰系、零宽/BOM/双向等不可见字符，弯引号转直引号，连续逗号/句号合并，strip；清洗后为空则跳过 TTS 降级文本</td></tr>
+      <tr><td>可靠性</td><td>UTF-8 显式解码（修 SSE 无 charset 退 ISO-8859-1）· 行级解析 · 截断/解析失败重试（共 2 次尝试）</td></tr>
+      <tr><td>输出</td><td><code>wav</code> · <code>latency=normal</code> · 超时 <code>300s</code>（<code>system.chat.tts.fish.timeout</code>）</td></tr>
+      <tr><td>文本 prompt</td><td><b style="color:var(--fish)">无</b> —— 不构造自然语言提示语</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<footer>idol102 · 翻译语音 · 中文为线上原文 / EN 为参考译文 · 锚点基准 42f737a · <a href="index.html">← 返回首页</a></footer>
+</main>
+</div>
+<script src="toggle.js"></script>
+</body>
+</html>

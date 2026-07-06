@@ -21,6 +21,7 @@
 | "这个怎么验" / "能不能测出来" / "怎么找信号" | 进 P2，用 `pol-probe-advisor` 选最便宜探针 |
 | "定了" / "记下来" / "往下走" / "下一步" | 落当前阶段产物、更新 `STATE.md`、进下一阶段 |
 | "数据怎么样" / "上线两周了" / "该复盘了" | 进 P4 Signal Review，用 `oppa-analyze` 取数据，产出落 `workbench/data/` |
+| "角色为什么这样回" / "这段体感不对" / "语气/记忆有问题" | 读 `prompts/`（后端真实运行的提示语）来分析；要改进就开 bet 走 P0 |
 | "给团队看" / "演示一下" | 打开 / 更新 `demo/`（见 `STRUCTURE.md`） |
 | "要交给开发了" / "该落地了" | 整理 `docs/` PRD；需要时导出 BMAD handoff（见下） |
 | "X 版本 OK / 封版 / 定稿了" | 执行**封版仪式**（见下），把当时 docs+演示+数据冻进 `releases/vX/` |
@@ -71,7 +72,7 @@
 用户拍板某版本 OK（"1.0 封版 / 定稿"）时，按 `releases/README.md` 的仪式。核心：**原型不用拼接——活的原型永远只有根目录一份（=最新版），封版时把当时整份复制冻进 releases**：
 1. 建 `releases/v<X>/`。
 2. **复制**（不是移动）当前**整份原型**（`index.html` `app.js` `shell.js` `styles.css` `src/` `assets/` `server.js` `package.json`）→ `releases/v<X>/prototype/`（能单独跑的 1.0 原型）。
-3. 复制 `docs/` → `releases/v<X>/docs/`（正式 PRD）；`workbench/data/` 里这版指标 → `releases/v<X>/data/`。
+3. 复制 `docs/`（含埋点 `tracking/`）→ `releases/v<X>/docs/`（正式 PRD）；`prompts/` → `releases/v<X>/prompts/`（当版后端提示语）；`workbench/data/` 里这版指标 → `releases/v<X>/data/`。
 4. 复制 `demo/` → `releases/v<X>/demo/`，把 iframe 改指向 `../prototype/`（这版 demo 展示当版原型）；可选截关键页面图放 `demo/screens/`。
 5. 写 `releases/v<X>/RELEASE.md`：这版做了什么、用户拍板的决定、日期。
 6. 打 `git tag v<X>` 双保险。
